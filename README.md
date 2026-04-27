@@ -1,4 +1,9 @@
 # Astra-Tv-Browser-Homepage-
-Introducing Astra TV Browser Homepage, A fully customizable homepage for your TV browser. It's an open source project and is avaliable free of cost for everyone.
+Introducing Astra TV Browser Homepage, A fully customizable, simple and easy homepage for your TV browser. It's an open source project and is avaliable free of cost for everyone.
 It has the following features-
-
+~ Full remote support
+~ Works with browser mouse also
+~ Mordern UI, with eye comfortable colors
+~ Automaticaly fetchs logos from the respective website
+⭐Works best with TV BRO browser⭐
+CREATED WITH 💗 BY V-DEV
