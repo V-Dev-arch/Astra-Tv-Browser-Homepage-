@@ -10,6 +10,8 @@ It has the following features-
 
 ~ Automaticaly fetchs logos from the respective website
 
+You can directly use this from: https://v-dev-arch.github.io/Astra-Tv-Browser-Homepage-/
+
 ⭐Works best with TV BRO browser⭐
 
 CREATED WITH 💗 BY V-DEV
