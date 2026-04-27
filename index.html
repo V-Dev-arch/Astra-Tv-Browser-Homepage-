@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astra TV Homepage</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:radial-gradient(circle at top,#0b1020,#05070f);
+  color:white;
+  overflow:hidden;
+}
+
+#searchWrap{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.searchBox{
+  display:flex;
+  gap:6px;
+  flex:1;
+}
+
+input{
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:10px;
+  background:#4b7bff;
+  color:white;
+  cursor:pointer;
+}
+
+#categories{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  overflow-x:auto;
+}
+
+.category{
+  position:relative;
+  padding:8px 30px 8px 12px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.1);
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.category.active{
+  background:#4b7bff;
+}
+
+#grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  padding:20px;
+}
+
+.tile{
+  position:relative;
+  background:rgba(255,255,255,0.08);
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.add{
+  border:2px dashed rgba(255,255,255,0.3);
+}
+
+.menuDots,.catDots{
+  position:absolute;
+  top:6px;
+  right:8px;
+  font-size:22px;
+  cursor:pointer;
+}
+
+#contextMenuOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+#contextMenu{
+  width:260px;
+  background:#121212;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.menuHeader{
+  padding:14px;
+  color:#aaa;
+}
+
+.menuItem{
+  padding:12px;
+  cursor:pointer;
+}
+
+.menuDanger{
+  color:red;
+}
+
+.remote-focus{
+  outline:3px solid #4b7bff !important;
+  box-shadow:0 0 20px rgba(75,123,255,0.7);
+  transform:scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+<div id="searchWrap">
+  <div class="searchBox">
+    <input id="searchBar" placeholder="Search Google...">
+    <button onclick="search()">Search</button>
+  </div>
+
+  <div class="searchBox">
+    <input id="urlBar" placeholder="Enter URL">
+    <button onclick="goURL()">Go</button>
+  </div>
+</div>
+
+<div id="categories"></div>
+<div id="grid"></div>
+
+<div id="contextMenuOverlay" onclick="closeMenu()">
+  <div id="contextMenu" onclick="event.stopPropagation()">
+    <div class="menuHeader" id="menuTitle">Options</div>
+    <div id="menuBody"></div>
+  </div>
+</div>
+<script>
+let data=JSON.parse(localStorage.getItem("astra"))||{
+  categories:[
+    {
+      name:"Entertainment",
+      icon:"🎬",
+      tiles:[
+        {name:"YouTube",url:"https://youtube.com"},
+        {name:"Netflix",url:"https://netflix.com"}
+      ]
+    },
+    {
+      name:"Social",
+      icon:"📱",
+      tiles:[
+        {name:"Facebook",url:"https://facebook.com"}
+      ]
+    }
+  ]
+};
+
+let catIndex=0;
+let menuIndex=null;
+let menuType=null;
+let menuFocusIndex=0;
+
+/* ICON */
+function icon(url){
+  try{
+    return "https://www.google.com/s2/favicons?sz=64&domain="+new URL(url).hostname;
+  }catch(e){
+    return "";
+  }
+}
+
+/* SEARCH */
+function search(){
+  let q=searchBar.value;
+  if(q){
+    window.location.href="https://google.com/search?q="+encodeURIComponent(q);
+  }
+}
+
+function goURL(){
+  let url=urlBar.value;
+  if(!url)return;
+  if(!url.startsWith("http")) url="https://"+url;
+  window.location.href=url;
+}
+
+/* INPUT FIX */
+function handleInputDone(inputElement){
+  inputElement.addEventListener("keydown", function(e){
+    if(e.key==="Enter"){
+      setTimeout(()=>{
+        inputElement.blur();
+        document.body.focus();
+        updateFocusableElements();
+      },200);
+    }
+  });
+
+  inputElement.addEventListener("blur", function(){
+    setTimeout(()=>{
+      document.body.focus();
+      updateFocusableElements();
+    },200);
+  });
+}
+
+handleInputDone(searchBar);
+handleInputDone(urlBar);
+
+/* MENU */
+function openMenu(type,index,name){
+  menuType=type;
+  menuIndex=index;
+  menuTitle.innerText=name;
+  menuFocusIndex=0;
+
+  if(type==="tile"){
+    menuBody.innerHTML=`
+      <div class="menuItem" onclick="editTile()">Edit</div>
+      <div class="menuItem menuDanger" onclick="deleteTile()">Delete</div>
+    `;
+  }
+
+  if(type==="category"){
+    menuBody.innerHTML=`
+      <div class="menuItem" onclick="editCategory()">Edit</div>
+      <div class="menuItem menuDanger" onclick="deleteCategory()">Delete</div>
+    `;
+  }
+
+  contextMenuOverlay.style.display="flex";
+  updateMenuFocus();
+}
+
+function updateMenuFocus(){
+  let items=document.querySelectorAll(".menuItem");
+
+  items.forEach(item=>{
+    item.classList.remove("remote-focus");
+  });
+
+  if(items[menuFocusIndex]){
+    items[menuFocusIndex].classList.add("remote-focus");
+  }
+}
+
+function closeMenu(){
+  contextMenuOverlay.style.display="none";
+  updateFocusableElements();
+}
+
+function editTile(){
+  let t=data.categories[catIndex].tiles[menuIndex];
+  let name=prompt("Name",t.name);
+  let url=prompt("URL",t.url);
+
+  if(name&&url){
+    t.name=name;
+    t.url=url;
+    save();
+    render();
+  }
+
+  closeMenu();
+}
+
+function deleteTile(){
+  data.categories[catIndex].tiles.splice(menuIndex,1);
+  save();
+  render();
+  closeMenu();
+}
+
+function editCategory(){
+  let c=data.categories[menuIndex];
+  let name=prompt("Category name",c.name);
+
+  if(name){
+    c.name=name;
+    save();
+    render();
+  }
+
+  closeMenu();
+}
+
+function deleteCategory(){
+  data.categories.splice(menuIndex,1);
+  catIndex=0;
+  save();
+  render();
+  closeMenu();
+}
+
+function save(){
+  localStorage.setItem("astra",JSON.stringify(data));
+}
+
+/* CATEGORIES */
+function renderCategories(){
+  categories.innerHTML="";
+
+  data.categories.forEach((cat,i)=>{
+    let el=document.createElement("div");
+    el.className="category"+(i===catIndex?" active":"");
+
+    el.innerHTML=`
+      ${(cat.icon||"📁")} ${cat.name}
+      <div class="catDots">⋮</div>
+    `;
+
+    el.onclick=()=>{
+      catIndex=i;
+      render();
+    };
+
+    el.querySelector(".catDots").onclick=(e)=>{
+      e.stopPropagation();
+      openMenu("category",i,"Category Options");
+    };
+
+    categories.appendChild(el);
+  });
+
+  let add=document.createElement("div");
+  add.className="category";
+  add.innerText="+ Category";
+
+  add.onclick=()=>{
+    let name=prompt("Category name");
+    if(name){
+      data.categories.push({
+        name,
+        icon:"📁",
+        tiles:[]
+      });
+      save();
+      render();
+    }
+  };
+
+  categories.appendChild(add);
+}
+
+/* TILES */
+function renderTiles(){
+  grid.innerHTML="";
+
+  let tiles=data.categories[catIndex].tiles;
+
+  tiles.forEach((t,i)=>{
+    let el=document.createElement("div");
+    el.className="tile";
+
+    el.innerHTML=`
+      <img src="${icon(t.url)}" width="32">
+      <div>${t.name}</div>
+      <div class="menuDots">⋮</div>
+    `;
+
+    el.onclick=()=>window.open(t.url,"_blank");
+
+    el.querySelector(".menuDots").onclick=(e)=>{
+      e.stopPropagation();
+      openMenu("tile",i,"Tile Options");
+    };
+
+    grid.appendChild(el);
+  });
+
+  let add=document.createElement("div");
+  add.className="tile add";
+  add.innerText="+ Add";
+
+  add.onclick=()=>{
+    let name=prompt("Name");
+    let url=prompt("URL");
+
+    if(name&&url){
+      data.categories[catIndex].tiles.push({name,url});
+      save();
+      render();
+    }
+  };
+
+  grid.appendChild(add);
+}
+
+/* REMOTE NAVIGATION */
+let currentSection="search";
+let searchIndex=0;
+let categoryFocusIndex=0;
+let tileFocusIndex=0;
+let categoryDotMode=false;
+let tileDotMode=false;
+
+function clearFocus(){
+  document.querySelectorAll(".remote-focus").forEach(el=>{
+    el.classList.remove("remote-focus");
+  });
+}
+
+function updateFocusableElements(){
+
+  if(contextMenuOverlay.style.display==="flex"){
+    updateMenuFocus();
+    return;
+  }
+
+  clearFocus();
+
+  const searchElements=[
+    searchBar,
+    document.querySelectorAll("#searchWrap button")[0],
+    urlBar,
+    document.querySelectorAll("#searchWrap button")[1]
+  ];
+
+  const categoryElements=document.querySelectorAll(".category");
+  const categoryDots=document.querySelectorAll(".catDots");
+
+  const tileElements=document.querySelectorAll(".tile");
+  const tileDots=document.querySelectorAll(".menuDots");
+
+  let target=null;
+
+  if(currentSection==="search"){
+    target=searchElements[searchIndex];
+  }
+
+  else if(currentSection==="categories"){
+    target=categoryDotMode
+      ? categoryDots[categoryFocusIndex]
+      : categoryElements[categoryFocusIndex];
+  }
+
+  else if(currentSection==="tiles"){
+    target=tileDotMode
+      ? tileDots[tileFocusIndex]
+      : tileElements[tileFocusIndex];
+  }
+
+  if(target){
+    target.classList.add("remote-focus");
+
+    target.scrollIntoView({
+      behavior:"smooth",
+      block:"nearest",
+      inline:"nearest"
+    });
+  }
+}
+
+document.addEventListener("keydown",function(e){
+
+  const categoryElements=document.querySelectorAll(".category");
+  const tileElements=document.querySelectorAll(".tile");
+
+  /* MENU NAVIGATION */
+  if(contextMenuOverlay.style.display==="flex"){
+
+    let items=document.querySelectorAll(".menuItem");
+
+    if(e.key==="ArrowDown" && menuFocusIndex < items.length-1){
+      menuFocusIndex++;
+    }
+
+    else if(e.key==="ArrowUp" && menuFocusIndex > 0){
+      menuFocusIndex--;
+    }
+
+    else if(e.key==="Enter"){
+      items[menuFocusIndex]?.click();
+    }
+
+    else if(e.key==="Escape" || e.key==="Backspace"){
+      closeMenu();
+    }
+
+    updateMenuFocus();
+    return;
+  }
+
+  if(e.key==="Escape"||e.key==="Backspace"){
+    closeMenu();
+    return;
+  }
+
+  if(currentSection==="search"){
+
+    if(e.key==="ArrowRight" && searchIndex<3){
+      searchIndex++;
+    }
+
+    else if(e.key==="ArrowLeft" && searchIndex>0){
+      searchIndex--;
+    }
+
+    else if(e.key==="ArrowDown"){
+      currentSection="categories";
+    }
+  }
+
+  else if(currentSection==="categories"){
+
+    if(e.key==="ArrowRight"){
+      if(!categoryDotMode){
+        categoryDotMode=true;
+      }else{
+        categoryDotMode=false;
+        if(categoryFocusIndex<categoryElements.length-1){
+          categoryFocusIndex++;
+        }
+      }
+    }
+
+    else if(e.key==="ArrowLeft"){
+      if(categoryDotMode){
+        categoryDotMode=false;
+      }else if(categoryFocusIndex>0){
+        categoryFocusIndex--;
+      }
+    }
+
+    else if(e.key==="ArrowDown"){
+      currentSection="tiles";
+    }
+
+    else if(e.key==="ArrowUp"){
+      currentSection="search";
+    }
+  }
+
+  else if(currentSection==="tiles"){
+
+    const columns=5;
+
+    if(e.key==="ArrowRight"){
+      if(!tileDotMode){
+        tileDotMode=true;
+      }else{
+        tileDotMode=false;
+        if(tileFocusIndex<tileElements.length-1){
+          tileFocusIndex++;
+        }
+      }
+    }
+
+    else if(e.key==="ArrowLeft"){
+      if(tileDotMode){
+        tileDotMode=false;
+      }else if(tileFocusIndex>0){
+        tileFocusIndex--;
+      }
+    }
+
+    else if(e.key==="ArrowDown"){
+      if(tileFocusIndex+columns<tileElements.length){
+        tileFocusIndex+=columns;
+      }
+    }
+
+    else if(e.key==="ArrowUp"){
+      if(tileFocusIndex-columns>=0){
+        tileFocusIndex-=columns;
+      }else{
+        currentSection="categories";
+      }
+    }
+  }
+
+  if(e.key==="Enter"){
+    let focused=document.querySelector(".remote-focus");
+
+    if(focused){
+      if(focused.tagName==="INPUT"){
+        focused.focus();
+      }else{
+        focused.click();
+      }
+    }
+  }
+
+  updateFocusableElements();
+});
+
+function render(){
+  renderCategories();
+  renderTiles();
+  updateFocusableElements();
+}
+
+render();
+</script>
+
+</body>
+</html>
+
