@@ -2,7 +2,7 @@
 Introducing Astra TV Browser Homepage, A fully customizable, simple and easy homepage for your TV browser. It's an open source project and is avaliable free of cost for everyone.
 It has the following features-
 
-~ Full remote support
+~ Full remote, keyboard and game controller support
 
 ~ Works with browser mouse also
 
