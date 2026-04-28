@@ -15,3 +15,7 @@ You can directly use this from: https://v-dev-arch.github.io/Astra-Tv-Browser-Ho
 ⭐Works best with TV BRO browser⭐
 
 CREATED WITH 💗 BY V-DEV
+
+<p align="center">
+  <img src="https://files.catbox.moe/f78wd1.jpg" width="600">
+</p>
