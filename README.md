@@ -19,3 +19,9 @@ CREATED WITH 💗 BY V-DEV
 <p align="center">
   <img src="https://files.catbox.moe/f78wd1.jpg" width="600">
 </p>
+
+Astra TV Browser Homepage does not collect, store, or share any personal user data.
+All user settings and tiles are saved locally on the user’s device only.
+No backend server or tracking system is used in this project.
+External links and services are opened directly by the user’s browser.
+❌ NO COPYRIGHT INTENDED ❌
