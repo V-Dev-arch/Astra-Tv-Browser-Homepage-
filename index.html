@@ -157,21 +157,13 @@ button{
 <script>
 let data=JSON.parse(localStorage.getItem("astra"))||{
   categories:[
-    {
-      name:"Entertainment",
-      icon:"🎬",
-      tiles:[
-        {name:"YouTube",url:"https://youtube.com"},
-        {name:"Netflix",url:"https://netflix.com"}
-      ]
-    },
-    {
-      name:"Social",
-      icon:"📱",
-      tiles:[
-        {name:"Facebook",url:"https://facebook.com"}
-      ]
-    }
+    {name:"Entertainment",icon:"🎬",tiles:[
+      {name:"YouTube",url:"https://youtube.com"},
+      {name:"Netflix",url:"https://netflix.com"}
+    ]},
+    {name:"Social",icon:"📱",tiles:[
+      {name:"Facebook",url:"https://facebook.com"}
+    ]}
   ]
 };
 
@@ -180,21 +172,24 @@ let menuIndex=null;
 let menuType=null;
 let menuFocusIndex=0;
 
+let introActive=false;
+let popupActive=false;
+
+let introDone=localStorage.getItem("astra_intro_done")==="1";
+let homeDone=localStorage.getItem("astra_home_done")==="1";
+let visitCount=parseInt(localStorage.getItem("astra_visit_count")||"0");
+
 /* ICON */
 function icon(url){
   try{
     return "https://www.google.com/s2/favicons?sz=64&domain="+new URL(url).hostname;
-  }catch(e){
-    return "";
-  }
+  }catch(e){ return ""; }
 }
 
 /* SEARCH */
 function search(){
   let q=searchBar.value;
-  if(q){
-    window.location.href="https://google.com/search?q="+encodeURIComponent(q);
-  }
+  if(q) window.location.href="https://google.com/search?q="+encodeURIComponent(q);
 }
 
 function goURL(){
@@ -206,7 +201,7 @@ function goURL(){
 
 /* INPUT FIX */
 function handleInputDone(inputElement){
-  inputElement.addEventListener("keydown", function(e){
+  inputElement.addEventListener("keydown",function(e){
     if(e.key==="Enter"){
       setTimeout(()=>{
         inputElement.blur();
@@ -216,7 +211,7 @@ function handleInputDone(inputElement){
     }
   });
 
-  inputElement.addEventListener("blur", function(){
+  inputElement.addEventListener("blur",function(){
     setTimeout(()=>{
       document.body.focus();
       updateFocusableElements();
@@ -226,6 +221,164 @@ function handleInputDone(inputElement){
 
 handleInputDone(searchBar);
 handleInputDone(urlBar);
+
+/* INTRO SCREEN */
+function showIntro(){
+  if(introDone) return;
+
+  introActive=true;
+
+  let box=document.createElement("div");
+  box.id="astraIntro";
+
+  box.style.cssText=`
+    position:fixed;inset:0;z-index:99999;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#070707,#111,#151515);
+    color:white;font-family:Arial;
+  `;
+
+  box.innerHTML=`
+  <div style="
+    width:88%;max-width:950px;padding:35px;
+    border-radius:28px;
+    background:rgba(255,255,255,.05);
+    box-shadow:0 0 28px rgba(0,255,255,.18),0 0 35px rgba(255,0,255,.12);
+    position:relative;
+  ">
+    <div style="
+      font-size:34px;font-weight:bold;margin-bottom:20px;
+      background:linear-gradient(90deg,#00ffff,#ff00ff,#00ff88);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    ">
+      Welcome to Astra TV Browser Homepage
+    </div>
+
+    <div style="font-size:22px;line-height:1.9;color:#ddd;">
+      ~ Full remote, keyboard and game controller support<br>
+      ~ Works with browser mouse also<br>
+      ~ Modern UI, with eye comfortable colors<br>
+      ~ Automatically fetchs logos from the respective website
+    </div>
+
+    <div style="
+      position:absolute;right:25px;top:50%;
+      transform:translateY(-50%);
+      text-align:center;
+    ">
+      <div id="introNext" style="
+        width:72px;height:72px;border-radius:50%;
+        background:#000;color:#fff;
+        display:flex;align-items:center;justify-content:center;
+        font-size:42px;cursor:pointer;
+        margin:auto;
+      ">➜</div>
+
+      <div style="
+        margin-top:10px;
+        font-size:14px;
+        color:#ddd;
+        line-height:1.4;
+      ">
+        Press D-Pad Right<br>or Click Here
+      </div>
+    </div>
+  </div>
+  `;
+
+  document.body.appendChild(box);
+  document.getElementById("introNext").onclick=closeIntro;
+}
+
+function closeIntro(){
+  let el=document.getElementById("astraIntro");
+  if(el) el.remove();
+
+  introActive=false;
+  introDone=true;
+  localStorage.setItem("astra_intro_done","1");
+
+  showHomepagePopup();
+  updateFocusableElements();
+}
+
+/* HOMEPAGE POPUP */
+function showHomepagePopup(){
+  if(homeDone) return;
+  if(visitCount>=3) return;
+
+  popupActive=true;
+  visitCount++;
+  localStorage.setItem("astra_visit_count",visitCount);
+
+  let pop=document.createElement("div");
+  pop.id="astraPopup";
+
+  pop.style.cssText=`
+    position:fixed;
+    top:25px;right:25px;
+    z-index:99998;
+    min-width:360px;
+    padding:20px;
+    border-radius:18px;
+    background:#111;
+    color:#fff;
+    font-family:Arial;
+    box-shadow:0 0 20px rgba(0,255,255,.18);
+  `;
+
+  pop.innerHTML=`
+    <div style="font-size:22px;font-weight:bold;margin-bottom:10px;">
+      Make Astra Homepage
+    </div>
+
+    <div style="font-size:18px;color:#ccc;line-height:1.5;">
+      Set Astra TV Browser as your default homepage.
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+      <div id="popupSetNow" style="
+        padding:10px 18px;
+        background:#00ffff;
+        color:#000;
+        border-radius:12px;
+        font-weight:bold;
+        cursor:pointer;
+      ">Set Now</div>
+
+      <div id="popupSet" style="
+        padding:10px 18px;
+        background:#fff;
+        color:#000;
+        border-radius:12px;
+        font-weight:bold;
+        cursor:pointer;
+      ">Already Set</div>
+    </div>
+  `;
+
+  document.body.appendChild(pop);
+
+  document.getElementById("popupSetNow").onclick=function(){
+    alert("Open browser menu and set this page as homepage / start page.");
+  };
+
+  document.getElementById("popupSet").onclick=function(){
+    localStorage.setItem("astra_home_done","1");
+    homeDone=true;
+    closePopup();
+  };
+
+  setTimeout(closePopup,5000);
+}
+
+function closePopup(){
+  let p=document.getElementById("astraPopup");
+  if(p) p.remove();
+  popupActive=false;
+  updateFocusableElements();
+}
 
 /* MENU */
 function openMenu(type,index,name){
@@ -254,14 +407,8 @@ function openMenu(type,index,name){
 
 function updateMenuFocus(){
   let items=document.querySelectorAll(".menuItem");
-
-  items.forEach(item=>{
-    item.classList.remove("remote-focus");
-  });
-
-  if(items[menuFocusIndex]){
-    items[menuFocusIndex].classList.add("remote-focus");
-  }
+  items.forEach(item=>item.classList.remove("remote-focus"));
+  if(items[menuFocusIndex]) items[menuFocusIndex].classList.add("remote-focus");
 }
 
 function closeMenu(){
@@ -280,7 +427,6 @@ function editTile(){
     save();
     render();
   }
-
   closeMenu();
 }
 
@@ -300,7 +446,6 @@ function editCategory(){
     save();
     render();
   }
-
   closeMenu();
 }
 
@@ -329,10 +474,7 @@ function renderCategories(){
       <div class="catDots">⋮</div>
     `;
 
-    el.onclick=()=>{
-      catIndex=i;
-      render();
-    };
+    el.onclick=()=>{ catIndex=i; render(); };
 
     el.querySelector(".catDots").onclick=(e)=>{
       e.stopPropagation();
@@ -349,11 +491,7 @@ function renderCategories(){
   add.onclick=()=>{
     let name=prompt("Category name");
     if(name){
-      data.categories.push({
-        name,
-        icon:"📁",
-        tiles:[]
-      });
+      data.categories.push({name,icon:"📁",tiles:[]});
       save();
       render();
     }
@@ -365,7 +503,6 @@ function renderCategories(){
 /* TILES */
 function renderTiles(){
   grid.innerHTML="";
-
   let tiles=data.categories[catIndex].tiles;
 
   tiles.forEach((t,i)=>{
@@ -406,7 +543,7 @@ function renderTiles(){
   grid.appendChild(add);
 }
 
-/* REMOTE NAVIGATION */
+/* REMOTE */
 let currentSection="search";
 let searchIndex=0;
 let categoryFocusIndex=0;
@@ -421,6 +558,7 @@ function clearFocus(){
 }
 
 function updateFocusableElements(){
+  if(introActive) return;
 
   if(contextMenuOverlay.style.display==="flex"){
     updateMenuFocus();
@@ -438,64 +576,45 @@ function updateFocusableElements(){
 
   const categoryElements=document.querySelectorAll(".category");
   const categoryDots=document.querySelectorAll(".catDots");
-
   const tileElements=document.querySelectorAll(".tile");
   const tileDots=document.querySelectorAll(".menuDots");
 
   let target=null;
 
-  if(currentSection==="search"){
-    target=searchElements[searchIndex];
-  }
-
+  if(currentSection==="search") target=searchElements[searchIndex];
   else if(currentSection==="categories"){
-    target=categoryDotMode
-      ? categoryDots[categoryFocusIndex]
-      : categoryElements[categoryFocusIndex];
-  }
-
-  else if(currentSection==="tiles"){
-    target=tileDotMode
-      ? tileDots[tileFocusIndex]
-      : tileElements[tileFocusIndex];
+    target=categoryDotMode ? categoryDots[categoryFocusIndex] : categoryElements[categoryFocusIndex];
+  }else if(currentSection==="tiles"){
+    target=tileDotMode ? tileDots[tileFocusIndex] : tileElements[tileFocusIndex];
   }
 
   if(target){
     target.classList.add("remote-focus");
-
-    target.scrollIntoView({
-      behavior:"smooth",
-      block:"nearest",
-      inline:"nearest"
-    });
+    target.scrollIntoView({behavior:"smooth",block:"nearest",inline:"nearest"});
   }
 }
 
 document.addEventListener("keydown",function(e){
 
+  if(introActive){
+    if(e.key==="ArrowRight" || e.key==="Enter") closeIntro();
+    return;
+  }
+
+  if(popupActive){
+    if(e.key==="Escape"||e.key==="Backspace"||e.key==="Enter") closePopup();
+  }
+
   const categoryElements=document.querySelectorAll(".category");
   const tileElements=document.querySelectorAll(".tile");
 
-  /* MENU NAVIGATION */
   if(contextMenuOverlay.style.display==="flex"){
-
     let items=document.querySelectorAll(".menuItem");
 
-    if(e.key==="ArrowDown" && menuFocusIndex < items.length-1){
-      menuFocusIndex++;
-    }
-
-    else if(e.key==="ArrowUp" && menuFocusIndex > 0){
-      menuFocusIndex--;
-    }
-
-    else if(e.key==="Enter"){
-      items[menuFocusIndex]?.click();
-    }
-
-    else if(e.key==="Escape" || e.key==="Backspace"){
-      closeMenu();
-    }
+    if(e.key==="ArrowDown" && menuFocusIndex<items.length-1) menuFocusIndex++;
+    else if(e.key==="ArrowUp" && menuFocusIndex>0) menuFocusIndex--;
+    else if(e.key==="Enter") items[menuFocusIndex]?.click();
+    else if(e.key==="Escape"||e.key==="Backspace") closeMenu();
 
     updateMenuFocus();
     return;
@@ -507,97 +626,55 @@ document.addEventListener("keydown",function(e){
   }
 
   if(currentSection==="search"){
-
-    if(e.key==="ArrowRight" && searchIndex<3){
-      searchIndex++;
-    }
-
-    else if(e.key==="ArrowLeft" && searchIndex>0){
-      searchIndex--;
-    }
-
-    else if(e.key==="ArrowDown"){
-      currentSection="categories";
-    }
+    if(e.key==="ArrowRight" && searchIndex<3) searchIndex++;
+    else if(e.key==="ArrowLeft" && searchIndex>0) searchIndex--;
+    else if(e.key==="ArrowDown") currentSection="categories";
   }
 
   else if(currentSection==="categories"){
-
     if(e.key==="ArrowRight"){
-      if(!categoryDotMode){
-        categoryDotMode=true;
-      }else{
+      if(!categoryDotMode) categoryDotMode=true;
+      else{
         categoryDotMode=false;
-        if(categoryFocusIndex<categoryElements.length-1){
-          categoryFocusIndex++;
-        }
+        if(categoryFocusIndex<categoryElements.length-1) categoryFocusIndex++;
       }
     }
-
     else if(e.key==="ArrowLeft"){
-      if(categoryDotMode){
-        categoryDotMode=false;
-      }else if(categoryFocusIndex>0){
-        categoryFocusIndex--;
-      }
+      if(categoryDotMode) categoryDotMode=false;
+      else if(categoryFocusIndex>0) categoryFocusIndex--;
     }
-
-    else if(e.key==="ArrowDown"){
-      currentSection="tiles";
-    }
-
-    else if(e.key==="ArrowUp"){
-      currentSection="search";
-    }
+    else if(e.key==="ArrowDown") currentSection="tiles";
+    else if(e.key==="ArrowUp") currentSection="search";
   }
 
   else if(currentSection==="tiles"){
-
     const columns=5;
 
     if(e.key==="ArrowRight"){
-      if(!tileDotMode){
-        tileDotMode=true;
-      }else{
+      if(!tileDotMode) tileDotMode=true;
+      else{
         tileDotMode=false;
-        if(tileFocusIndex<tileElements.length-1){
-          tileFocusIndex++;
-        }
+        if(tileFocusIndex<tileElements.length-1) tileFocusIndex++;
       }
     }
-
     else if(e.key==="ArrowLeft"){
-      if(tileDotMode){
-        tileDotMode=false;
-      }else if(tileFocusIndex>0){
-        tileFocusIndex--;
-      }
+      if(tileDotMode) tileDotMode=false;
+      else if(tileFocusIndex>0) tileFocusIndex--;
     }
-
     else if(e.key==="ArrowDown"){
-      if(tileFocusIndex+columns<tileElements.length){
-        tileFocusIndex+=columns;
-      }
+      if(tileFocusIndex+columns<tileElements.length) tileFocusIndex+=columns;
     }
-
     else if(e.key==="ArrowUp"){
-      if(tileFocusIndex-columns>=0){
-        tileFocusIndex-=columns;
-      }else{
-        currentSection="categories";
-      }
+      if(tileFocusIndex-columns>=0) tileFocusIndex-=columns;
+      else currentSection="categories";
     }
   }
 
   if(e.key==="Enter"){
     let focused=document.querySelector(".remote-focus");
-
     if(focused){
-      if(focused.tagName==="INPUT"){
-        focused.focus();
-      }else{
-        focused.click();
-      }
+      if(focused.tagName==="INPUT") focused.focus();
+      else focused.click();
     }
   }
 
@@ -611,8 +688,13 @@ function render(){
 }
 
 render();
+
+setTimeout(function(){
+  if(!introDone) showIntro();
+  else showHomepagePopup();
+},700);
 </script>
 
 </body>
-</html>
-
+  </html>
+      
