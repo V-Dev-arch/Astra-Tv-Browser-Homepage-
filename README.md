@@ -18,5 +18,5 @@ You can directly visit it at: https://v-dev-arch.github.io/Astra-Tv-Browser-Home
 Made with 💖 By V-Dev
 
 <p align="center">
-  <img src="https://files.catbox.moe/r1ysq2.png" alt="Image" width="700">
+  <img src="https://files.catbox.moe/r1ysq2.png" alt="Astra TV Browser Homepage" width="800">
 </p>
