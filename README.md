@@ -20,5 +20,5 @@ You can directly visit it at: https://v-dev-arch.github.io/Astra-Tv-Browser-Home
 Made with 💖 By V-Dev
 
 <p align="center">
-  <img src="" width="800">
+  <img src="https://files.catbox.moe/f78wd1.jpg" width="800">
 </p>
