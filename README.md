@@ -3,6 +3,8 @@
 Introducing Astra Tv Browser Homepage, Its fully customizable, simple and easy homepage.
 It has the following features-
 
+~ Supports Computer and Tv and may run in mobile in landscape mode.
+
 ~ Supports Remote, Keyboard and Game controller.
 
 ~ Saves all the data on the same device.
