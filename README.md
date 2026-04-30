@@ -5,7 +5,7 @@ It has the following features-
 
 ~ Supports Computer, Tv and mobile in landscape mode.
 
-~ Supports Remote, Keyboard and Game controller.
+~ Supports Remote, Keyboard, Mouse and Game controller.
 
 ~ Saves all the data on the same device.
 
