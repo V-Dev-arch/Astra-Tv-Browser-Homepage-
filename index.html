@@ -7,6 +7,67 @@
 <title>Astra TV Browser Homepage</title>
 
 <style>
+  /* PREMIUM REMOTE TOGGLE */
+#remoteToggle{
+  position:fixed;
+  top:14px;
+  right:14px;
+  z-index:100000;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  padding:12px 18px;
+  border-radius:18px;
+
+  background:linear-gradient(135deg,#00d2ff,#3a47d5);
+  color:white;
+
+  font-size:15px;
+  font-weight:bold;
+  letter-spacing:0.5px;
+
+  cursor:pointer;
+  user-select:none;
+
+  border:1px solid rgba(255,255,255,0.18);
+
+  box-shadow:
+    0 0 18px rgba(0,210,255,0.45),
+    inset 0 0 10px rgba(255,255,255,0.12);
+
+  backdrop-filter:blur(10px);
+
+  transition:
+    transform .18s,
+    box-shadow .18s,
+    background .25s;
+}
+
+#remoteToggle:hover{
+  transform:scale(1.04);
+}
+
+#remoteToggle:active{
+  transform:scale(0.97);
+}
+
+#remoteToggle::before{
+  content:"📡";
+  font-size:18px;
+}
+
+#remoteToggle.off{
+  background:linear-gradient(135deg,#2d2d2d,#555);
+  box-shadow:
+    0 0 10px rgba(255,255,255,0.08),
+    inset 0 0 6px rgba(255,255,255,0.05);
+}
+
+#remoteToggle.off::before{
+  content:"⭕";
+}
 body{
   margin:0;
   font-family:Arial;
@@ -133,6 +194,9 @@ button{
 </head>
 
 <body>
+  <div id="remoteToggle">
+  <span id="remoteToggleText">Remote Nav On</span>
+  </div>
 
 <div id="searchWrap">
   <div class="searchBox">
@@ -545,6 +609,31 @@ function renderTiles(){
 }
 
 /* REMOTE */
+let remoteNavEnabled=true;
+
+const remoteToggle=document.getElementById("remoteToggle");
+const remoteToggleText=document.getElementById("remoteToggleText");
+
+remoteToggle.onclick=function(){
+
+  remoteNavEnabled=!remoteNavEnabled;
+
+  if(remoteNavEnabled){
+
+    remoteToggleText.innerText="Remote Nav On";
+    remoteToggle.classList.remove("off");
+
+    updateFocusableElements();
+
+  }else{
+
+    remoteToggleText.innerText="Remote Nav Off";
+    remoteToggle.classList.add("off");
+
+    clearFocus();
+  }
+};
+
 let currentSection="search";
 let searchIndex=0;
 let categoryFocusIndex=0;
@@ -595,7 +684,9 @@ function updateFocusableElements(){
   }
 }
 
-document.addEventListener("keydown",function(e){
+  document.addEventListener("keydown",function(e){
+
+  if(!remoteNavEnabled) return;
 
   if(introActive){
     if(e.key==="ArrowRight" || e.key==="Enter") closeIntro();
