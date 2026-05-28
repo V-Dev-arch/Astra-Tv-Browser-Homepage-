@@ -31,5 +31,5 @@ Made with 💖 By V-Dev
 ## PREVIEW 
 
 <p align="center">
-  <img src="https://files.catbox.moe/f78wd1.jpg" width="800">
+  <img src="https://files.catbox.moe/pbi9ri.jpg" width="800">
 </p>
