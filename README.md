@@ -13,6 +13,8 @@ It has the following features-
 
 ~ Automatically fetchs the logo from the respective website.
 
+- Update: Added Remote Nav On/Off button so that it would not mess with browser's inbuilt navigation system.
+
 You can directly visit it at: https://v-dev-arch.github.io/Astra-Tv-Browser-Homepage-/
 
 ⭐Works best with TV BRO⭐
