@@ -8,51 +8,6 @@
 <title>Astra TV Browser Homepage</title>
 
 <style>
-  /* BACKGROUND BUTTON */
-#bgButton{
-  position:fixed;
-  bottom:18px;
-  left:18px;
-
-  z-index:99999;
-
-  display:flex;
-  align-items:center;
-  gap:8px;
-
-  padding:10px 16px;
-
-  border-radius:14px;
-
-  background:rgba(255,255,255,0.08);
-
-  color:white;
-
-  font-family:Arial;
-  font-size:15px;
-  font-weight:bold;
-
-  border:1px solid rgba(255,255,255,0.15);
-
-  backdrop-filter:blur(10px);
-
-  box-shadow:0 0 15px rgba(0,0,0,0.35);
-
-  cursor:pointer;
-
-  transition:0.2s;
-
-  outline:none;
-}
-
-#bgButton:hover,
-#bgButton.remote-focus{
-  transform:scale(1.05);
-
-  box-shadow:
-    0 0 18px rgba(0,210,255,0.4),
-    0 0 30px rgba(0,210,255,0.2);
-}
   /* PREMIUM REMOTE TOGGLE */
 #remoteToggle{
   position:fixed;
@@ -656,8 +611,6 @@ function renderTiles(){
 
 /* REMOTE */
 let remoteNavEnabled=true;
-  
-  const bgButton=document.getElementById("bgButton");
 
 const remoteToggle=document.getElementById("remoteToggle");
 const remoteToggleText=document.getElementById("remoteToggleText");
@@ -716,18 +669,12 @@ function updateFocusableElements(){
   const categoryDots=document.querySelectorAll(".catDots");
   const tileElements=document.querySelectorAll(".tile");
   const tileDots=document.querySelectorAll(".menuDots");
-  const extraElements=[bgButton];
 
   let target=null;
 
   if(currentSection==="search") target=searchElements[searchIndex];
   else if(currentSection==="categories"){
     target=categoryDotMode ? categoryDots[categoryFocusIndex] : categoryElements[categoryFocusIndex];
-    else if(currentSection==="extra"){
-
-  target=extraElements[0];
-
-  }
   }else if(currentSection==="tiles"){
     target=tileDotMode ? tileDots[tileFocusIndex] : tileElements[tileFocusIndex];
   }
@@ -806,11 +753,6 @@ function updateFocusableElements(){
     else if(e.key==="ArrowLeft"){
       if(tileDotMode) tileDotMode=false;
       else if(tileFocusIndex>0) tileFocusIndex--;
-      else if(e.key==="ArrowLeft"){
-
-  currentSection="extra";
-
-  }
     }
     else if(e.key==="ArrowDown"){
       if(tileFocusIndex+columns<tileElements.length) tileFocusIndex+=columns;
@@ -822,34 +764,11 @@ function updateFocusableElements(){
   }
 
   if(e.key==="Enter"){
-
-  let focused=document.querySelector(".remote-focus");
-
-  if(focused){
-
-    if(focused===bgButton){
-
-      let imageUrl=prompt("Enter image URL");
-
-      if(imageUrl){
-
-        localStorage.setItem("astra_custom_bg",imageUrl);
-
-        document.body.style.background=
-          "url('"+imageUrl+"') center center / cover no-repeat fixed";
-      }
-
+    let focused=document.querySelector(".remote-focus");
+    if(focused){
+      if(focused.tagName==="INPUT") focused.focus();
+      else focused.click();
     }
-
-    else if(focused.tagName==="INPUT"){
-
-      focused.focus();
-
-    }else{
-
-      focused.click();
-    }
-  }
   }
 
   updateFocusableElements();
@@ -859,15 +778,7 @@ function render(){
   renderCategories();
   renderTiles();
   updateFocusableElements();
-  }
-  /* LOAD SAVED BACKGROUND */
-const savedBg=localStorage.getItem("astra_custom_bg");
-
-if(savedBg){
-
-  document.body.style.background=
-    "url('"+savedBg+"') center center / cover no-repeat fixed";
-  }
+}
 
 render();
 
@@ -876,45 +787,6 @@ setTimeout(function(){
   else showHomepagePopup();
 },700);
 </script>
-  <a 
-  href="https://github.com/V-Dev-arch/Astra-Tv-Browser-Homepage-.git"
-  target="_blank"
-  style="
-    position:fixed;
-    bottom:18px;
-    right:18px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 16px;
-    border-radius:14px;
-    text-decoration:none;
-    font-family:Arial;
-    font-size:15px;
-    font-weight:bold;
-    color:white;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,0.15);
-    box-shadow:0 0 15px rgba(0,0,0,0.35);
-    transition:0.2s;
-    z-index:99999;
-  "
-  onmouseover="this.style.transform='scale(1.05)'"
-  onmouseout="this.style.transform='scale(1)'"
->
-  <img 
-    src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
-    width="18"
-    height="18"
-    style="filter:invert(1);"
-  >
-  GitHub
-</a>
-  <!-- BACKGROUND BUTTON -->
-<div id="bgButton" tabindex="0">
-  🖼 Background
-</div>
 
 </body>
   </html>
