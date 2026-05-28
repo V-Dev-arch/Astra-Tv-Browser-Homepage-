@@ -457,7 +457,7 @@ https://v-dev-arch.github.io/Astra-Tv-Browser-Homepage/
 
 👨‍💻 Developer
 
-<div align="center">⚡ VARINANGER
+<div align="center">⚡ V-Dev-arch
 
 Built for futuristic television experiences,
 Smart TV interfaces,
