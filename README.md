@@ -1,5 +1,7 @@
 # Astra-Tv-Browser-Homepage
 
+## FEATURES
+
 Introducing Astra Tv Browser Homepage, Its fully customizable, simple and easy homepage.
 It has the following features-
 
@@ -20,6 +22,8 @@ You can directly visit it at: https://v-dev-arch.github.io/Astra-Tv-Browser-Home
 ⭐Works best with TV BRO⭐
 
 Made with 💖 By V-Dev
+
+## PREVIEW 
 
 <p align="center">
   <img src="https://files.catbox.moe/f78wd1.jpg" width="800">
