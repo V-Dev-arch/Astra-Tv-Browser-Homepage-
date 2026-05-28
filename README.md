@@ -1,6 +1,9 @@
-<div align="center">🌌 ASTRA
+<p align="center">
+  <img src="https://files.catbox.moe/musa64.jpg" width="300">
+</p>
 
-TV Browser Homepage
+
+Astra TV Browser Homepage
 
 Futuristic Browser Homepage Experience For Smart TVs
 
