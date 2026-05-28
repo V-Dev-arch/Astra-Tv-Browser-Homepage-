@@ -10,6 +10,8 @@ Futuristic Browser Homepage Experience For Smart TVs
 
 <img src="https://img.shields.io/badge/TV_NAVIGATION_ENGINE-111827?style=for-the-badge&color=8B5CF6"><img src="https://img.shields.io/badge/GLASSMORPHISM_UI-111827?style=for-the-badge&color=3B82F6"><img src="https://img.shields.io/badge/REMOTE_FOCUS_SYSTEM-111827?style=for-the-badge&color=EC4899"><img src="https://img.shields.io/badge/LIGHTWEIGHT_ENGINE-111827?style=for-the-badge&color=22C55E"><img src="https://img.shields.io/badge/MOBILE_LANDSCAPE-111827?style=for-the-badge&color=F97316"><br><br>
 
+Basically You All Need Is A Good Browser To Use This
+
 «Designed for televisions, remotes and futuristic browser experiences.»
 
 </div>---
@@ -34,7 +36,12 @@ Astra transforms ordinary TV browsers into a modern dashboard-style interface.
 
 ✨ Main Features
 
-🎮 Full Remote Navigation
+ - Full Remote Navigation
+ - Full Keyboard Support
+ - Full Virtual and Physical Mouse Support
+ - Full Game Controller Support
+- Full Touchscreen Support 
+
 
 Astra includes a fully custom TV navigation engine designed for D-pad movement systems.
 
