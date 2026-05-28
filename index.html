@@ -199,11 +199,15 @@ button{
   <span id="remoteToggleText">Remote Nav On</span>
   </div>
 
-<div id="searchWrap">
-  <div class="searchBox">
-    <input id="searchBar" placeholder="Search Google...">
-    <button onclick="search()">Search</button>
-  </div>
+<div class="searchBox">
+
+  <input id="searchBar" placeholder="Search Google...">
+
+  <button id="voiceBtn">🎙️</button>
+
+  <button onclick="search()">Search</button>
+
+</div>
 
   <div class="searchBox">
     <input id="urlBar" placeholder="Enter URL">
@@ -251,7 +255,53 @@ function icon(url){
     return "https://www.google.com/s2/favicons?sz=64&domain="+new URL(url).hostname;
   }catch(e){ return ""; }
 }
+/* VOICE SEARCH */
+const voiceBtn=document.getElementById("voiceBtn");
 
+voiceBtn.onclick=function(){
+
+  const SpeechRecognition=
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+
+    alert("Voice search not supported");
+
+    return;
+  }
+
+  const recognition=new SpeechRecognition();
+
+  recognition.lang="en-US";
+
+  recognition.start();
+
+  voiceBtn.innerText="🎙️";
+
+  recognition.onresult=function(event){
+
+    let text=event.results[0][0].transcript;
+
+    searchBar.value=text;
+
+    window.location.href=
+      "https://google.com/search?q="+
+      encodeURIComponent(text);
+  };
+
+  recognition.onend=function(){
+
+    voiceBtn.innerText="🎤";
+  };
+
+  recognition.onerror=function(){
+
+    voiceBtn.innerText="🎤";
+
+    alert("Voice search failed");
+  };
+};
 /* SEARCH */
 function search(){
   let q=searchBar.value;
