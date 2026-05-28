@@ -203,7 +203,42 @@ button{
 
   <input id="searchBar" placeholder="Search Google...">
 
-  <button id="voiceBtn">🎙️</button>
+  <button id="voiceBtn">
+
+  <span style="
+    position:relative;
+    display:inline-block;
+    width:14px;
+    height:22px;
+    border:2px solid white;
+    border-radius:10px;
+  ">
+
+    <span style="
+      position:absolute;
+      bottom:-8px;
+      left:50%;
+      transform:translateX(-50%);
+      width:2px;
+      height:8px;
+      background:white;
+    "></span>
+
+    <span style="
+      position:absolute;
+      bottom:-12px;
+      left:50%;
+      transform:translateX(-50%);
+      width:12px;
+      height:6px;
+      border:2px solid white;
+      border-top:none;
+      border-radius:0 0 10px 10px;
+    "></span>
+
+  </span>
+
+  </button>
 
   <button onclick="search()">Search</button>
 
