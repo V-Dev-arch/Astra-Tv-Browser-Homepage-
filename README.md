@@ -127,6 +127,12 @@ Note: All future updates will be shown in this table only.
     <td>27 May 2026</td>
     <td>Added Remote navigation On/Off button</td>
   </tr>
+  
+  <tr>
+    <td>28 May 2026</td>
+    <td>Added Voice Search</td>
+  </tr>
+  
 </table>
 
 ---
