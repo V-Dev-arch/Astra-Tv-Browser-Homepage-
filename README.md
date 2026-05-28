@@ -2,6 +2,9 @@
   <img src="https://files.catbox.moe/musa64.jpg" width="100">
 </p>
 
+##Updates
+Note: All future updates will be shown in this table only.
+
 <table border="1">
   <tr>
     <th>Date</th>
