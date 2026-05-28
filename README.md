@@ -2,23 +2,7 @@
   <img src="https://files.catbox.moe/musa64.jpg" width="100">
 </p>
 
-## Updates
-Note: All future updates will be shown in this table only.
-
-<table border="1">
-  <tr>
-    <th>Date</th>
-    <th>Update</th>
-  </tr>
-
-  <tr>
-    <td>27 May 2026</td>
-    <td>Added Remote navigation On/Off button</td>
-  </tr>
-</table>
-
-
-Astra TV Browser Homepage
+## Astra TV Browser Homepage
 
 Futuristic Browser Homepage Experience For Smart TVs
 
@@ -122,6 +106,23 @@ Keyboard| ✅
 Game Controller| ✅
 Touch Screen| ✅
 Mobile Landscape Mode| ✅
+
+---
+
+## Updates
+Note: All future updates will be shown in this table only.
+
+<table border="1">
+  <tr>
+    <th>Date</th>
+    <th>Update</th>
+  </tr>
+
+  <tr>
+    <td>27 May 2026</td>
+    <td>Added Remote navigation On/Off button</td>
+  </tr>
+</table>
 
 ---
 
