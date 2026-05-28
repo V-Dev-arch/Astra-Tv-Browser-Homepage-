@@ -2,6 +2,18 @@
   <img src="https://files.catbox.moe/musa64.jpg" width="100">
 </p>
 
+<table border="1">
+  <tr>
+    <th>Date</th>
+    <th>Update</th>
+  </tr>
+
+  <tr>
+    <td>27 May 2026</td>
+    <td>Added Remote navigation On/Off button</td>
+  </tr>
+</table>
+
 
 Astra TV Browser Homepage
 
