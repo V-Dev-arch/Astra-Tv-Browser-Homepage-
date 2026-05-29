@@ -309,6 +309,7 @@ Included Homepage Modules
 - Dynamic navigation system
 - Custom backgrounds
 - Focus animation engine
+- Voice Search (May not work with fire tv)
 
 ---
 
@@ -409,10 +410,6 @@ Expanded support for:
 🔮 Future Updates
 
 🚀 Planned Features
-
-🎙️ Voice Search
-
-Integrated voice-based searching system.
 
 ---
 
