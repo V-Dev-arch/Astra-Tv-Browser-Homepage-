@@ -125,17 +125,17 @@ Note: All future updates will be shown in this table only.
 
   <tr>
     <td>27 May 2026</td>
-    <td>Added Remote Navigation On/Off Button</td>
+    <td>Added Remote Navigation On/Off Toggle</td>
   </tr>
   
   <tr>
     <td>28 May 2026</td>
-    <td>Added Voice Search</td>
+    <td>Added Voice Search Support</td>
   </tr>
 
   <tr>
     <td>29 May 2026</td>
-    <td>Improved Voice Search UI and Fixed Bugs</td>
+    <td>Improved Voice Search UI and Fixed Multiple Bugs</td>
   </tr>
 
   <tr>
@@ -143,9 +143,14 @@ Note: All future updates will be shown in this table only.
     <td>Added Weather Widget</td>
   </tr>
 
-    <tr>
+  <tr>
     <td>29 May 2026</td>
-    <td>Mobile Support Ended it's impossible to add mobile support again</td>
+    <td>Added Custom Background Support Using Image URLs</td>
+  </tr>
+
+  <tr>
+    <td>29 May 2026</td>
+    <td>Mobile Support Discontinued Due to Technical Limitations</td>
   </tr>
   
 </table>
