@@ -459,7 +459,7 @@ Custom homepage modules and sections.
 
 Visit now: 
 
-https://v-dev-arch.github.io/Astra-Tv-Browser-Homepage/
+https://v-dev-arch.github.io/Astra-Tv-Browser-Homepage-/
 
 ---
 
