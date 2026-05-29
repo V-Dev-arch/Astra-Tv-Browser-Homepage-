@@ -38,7 +38,6 @@ Astra transforms ordinary TV browsers into a modern dashboard-style interface.
  - Full Keyboard Support
  - Full Virtual and Physical Mouse Support
  - Full Game Controller Support
-- Full Touchscreen Support 
 
 
 Astra includes a fully custom TV navigation engine designed for D-pad movement systems.
@@ -94,7 +93,7 @@ Performance Optimizations
 
 ---
 
-📱 Multi-Input Compatibility
+ Multi-Input Compatibility
 
 ASTRA is not limited to television remotes only.
 
@@ -109,8 +108,6 @@ TV Remote| ✅
 Mouse| ✅
 Keyboard| ✅
 Game Controller| ✅
-Touch Screen| ✅
-Mobile Landscape Mode| ✅
 
 ---
 
@@ -170,26 +167,12 @@ Chromecast With Google TV| ✅ Supported
 Nvidia Shield TV| ✅ Supported
 Android TV Boxes| ✅ Supported
 Smart TVs| ✅ Compatible
-Desktop Browsers| ✅ Compatible
-Mobile Devices| ✅ Landscape Supported | Computer
+Desktop Browsers| ✅ | Computer
 
 BASICALLY ALL YOU NEED IS TO HAVE A GOOD BROWSER TO RUN IT
 
 ---
 
-📱 Mobile Landscape Support
-
-Astra also supports smartphones and tablets in landscape orientation.
-
-Mobile Features
-
-- Landscape optimized layout
-- Touch-friendly cards
-- Large focus areas
-- Smooth horizontal UI
-- TV-like mobile browsing experience
-
----
 
 🎮 Controller Compatibility
 
@@ -388,54 +371,17 @@ UI:
 
 <div align="center"><img src="https://files.catbox.moe/fp7uat.jpg" width="950"></div>---
 
-🚀 Past Updates
 
-✅ Added Remote Navigation ON/OFF Feature
-
-Astra now allows users to:
-
-- disable custom focus engine
-- use browser-native navigation
-- avoid navigation conflicts in TV browsers
-
-This greatly improves compatibility with browsers like:
-
-- TV Bro
-- browser-based TV launchers
-- native Smart TV browsers
 
 ---
 
-✅ Improved Focus Detection
-
-Navigation engine upgraded for:
-
-- smoother movement
-- better directional accuracy
-- faster response times
-
----
-
-✅ Added Multi-Input Compatibility
-
-Expanded support for:
-
-- remotes
-- mouse
-- controllers
-- touch screen systems
+ems
 
 ---
 
 🔮 Future Updates
 
 🚀 Planned Features
-
----
-
-🌦️ Weather Widgets
-
-Live TV homepage weather cards.
 
 ---
 
