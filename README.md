@@ -416,6 +416,11 @@ Custom homepage modules and sections.
 ---
 
 
+## Custom Background Image Support
+
+To add a custom image in background you need to have a link like https://example.com.jpg or png, If you don't have a link but have image on your device so you need to use catbox.moe this site let's you to create a live link of your files, upload you v image and you will get a link like this https://files.catbox.moe/ud77t.jpg/
+just paste that inside the custome image box and BOOM 💥 you will immediately see you custom background to remove, press reset.
+
 ## How To Use?
 
 Visit now: 
