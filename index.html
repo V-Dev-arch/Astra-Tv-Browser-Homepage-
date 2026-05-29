@@ -191,63 +191,49 @@ button{
   box-shadow:0 0 20px rgba(75,123,255,0.7);
   transform:scale(1.05);
 }
+  #topBar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+  padding:10px;
+  flex-wrap:wrap;
+}
+
+#voiceBtn{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:#4b7bff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:none;
+                       }
 </style>
 </head>
 
 <body>
-  <button id="voiceBtn">
-
-  <span style="
-    position:relative;
-    display:inline-block;
-    width:14px;
-    height:22px;
-    border:2px solid white;
-    border-radius:10px;
-  ">
-
-    <span style="
-      position:absolute;
-      bottom:-8px;
-      left:50%;
-      transform:translateX(-50%);
-      width:2px;
-      height:8px;
-      background:white;
-    "></span>
-
-    <span style="
-      position:absolute;
-      bottom:-12px;
-      left:50%;
-      transform:translateX(-50%);
-      width:12px;
-      height:6px;
-      border:2px solid white;
-      border-top:none;
-      border-radius:0 0 10px 10px;
-    "></span>
-
-  </span>
-
-  </button>
-
-  <button onclick="search()">Search</button>
-
-</div>
   <div id="remoteToggle">
   <span id="remoteToggleText">Remote Nav On</span>
   </div>
 
-<div class="searchBox">
+<div id="topBar">
 
-  <input id="searchBar" placeholder="Search Google...">
+  <div class="searchBox">
+    <input id="searchBar" placeholder="Search Google...">
+    <button onclick="search()">Search</button>
+  </div>
+
+  <button id="voiceBtn"></button>
 
   <div class="searchBox">
     <input id="urlBar" placeholder="Enter URL">
     <button onclick="goURL()">Go</button>
   </div>
 
+</div>
 <div id="categories"></div>
 <div id="grid"></div>
 
@@ -290,6 +276,38 @@ function icon(url){
 }
 /* VOICE SEARCH */
 const voiceBtn=document.getElementById("voiceBtn");
+voiceBtn.innerHTML = `
+  <span style="
+    position:relative;
+    display:inline-block;
+    width:14px;
+    height:22px;
+    border:2px solid white;
+    border-radius:10px;
+  ">
+    <span style="
+      position:absolute;
+      bottom:-8px;
+      left:50%;
+      transform:translateX(-50%);
+      width:2px;
+      height:8px;
+      background:white;
+    "></span>
+
+    <span style="
+      position:absolute;
+      bottom:-12px;
+      left:50%;
+      transform:translateX(-50%);
+      width:12px;
+      height:6px;
+      border:2px solid white;
+      border-top:none;
+      border-radius:0 0 10px 10px;
+    "></span>
+  </span>
+`;
 
 voiceBtn.onclick=function(){
 
@@ -905,8 +923,6 @@ setTimeout(function(){
   >
   GitHub
 </a>
-
-</body>
 
 </body>
   </html>
