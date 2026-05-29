@@ -142,6 +142,11 @@ Note: All future updates will be shown in this table only.
     <td>29 May 2026</td>
     <td>Added Weather Widget</td>
   </tr>
+
+    <tr>
+    <td>29 May 2026</td>
+    <td>Mobile Support Ended it's impossible to add mobile support again</td>
+  </tr>
   
 </table>
 
