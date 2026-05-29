@@ -125,7 +125,7 @@ Note: All future updates will be shown in this table only.
 
   <tr>
     <td>27 May 2026</td>
-    <td>Added Remote navigation On/Off button</td>
+    <td>Added Remote Navigation On/Off Button</td>
   </tr>
   
   <tr>
@@ -135,10 +135,10 @@ Note: All future updates will be shown in this table only.
 
   <tr>
     <td>29 May 2026</td>
-    <td>Made Voice Search Glowing And Fixed Bugs</td>
+    <td>Improved Voice Search UI and Fixed Bugs</td>
   </tr>
 
-    <tr>
+  <tr>
     <td>29 May 2026</td>
     <td>Added Weather Widget</td>
   </tr>
