@@ -498,6 +498,116 @@ button{
 
   cursor:pointer;
 }
+
+  /* SETTINGS BUTTON */
+
+#settingsMenuBtn{
+  position:fixed;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+
+  width:54px;
+  height:54px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(12px);
+
+  border:1px solid rgba(255,255,255,0.15);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:28px;
+  color:white;
+
+  cursor:pointer;
+
+  z-index:99999;
+
+  box-shadow:0 0 15px rgba(0,0,0,0.35);
+}
+
+/* SETTINGS PANEL */
+
+#settingsPanel{
+  position:fixed;
+
+  top:50%;
+  left:50%;
+
+  transform:translate(-50%,-50%);
+
+  width:420px;
+  max-width:92%;
+
+  background:#111;
+
+  border-radius:22px;
+
+  padding:22px;
+
+  display:none;
+
+  z-index:100000;
+
+  box-shadow:0 0 30px rgba(0,0,0,0.6);
+}
+
+.settingsTitle{
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:22px;
+}
+
+.settingItem{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  margin-bottom:18px;
+
+  font-size:18px;
+}
+
+.settingItem input[type="checkbox"]{
+  width:22px;
+  height:22px;
+}
+
+.settingItem input[type="color"]{
+  width:60px;
+  height:38px;
+  border:none;
+  background:none;
+  cursor:pointer;
+}
+
+/* RAINBOW MODE */
+
+.rainbowMode{
+  animation:rainbowMove 8s linear infinite;
+  background-size:400% 400% !important;
+  background-image:linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    lime,
+    cyan,
+    blue,
+    violet
+  ) !important;
+}
+
+@keyframes rainbowMove{
+  0%{background-position:0% 50%;}
+  100%{background-position:100% 50%;}
+}
                        }
 </style>
 </head>
@@ -1269,6 +1379,163 @@ if(savedWallpaper){
   document.body.style.background=
     `url('${savedWallpaper}') center/cover no-repeat fixed`;
 }
+
+/* SETTINGS SYSTEM */
+
+const settingsMenuBtn=
+  document.getElementById("settingsMenuBtn");
+
+const settingsPanel=
+  document.getElementById("settingsPanel");
+
+const githubButton=
+  document.querySelector('a[href*="github"]');
+
+let astraSettings=
+  JSON.parse(
+    localStorage.getItem("astra_settings")
+  ) || {
+
+    weather:true,
+    wallpaper:true,
+    github:true,
+    dark:true,
+    rainbow:false,
+    accent:"#4b7bff"
+};
+
+settingsMenuBtn.onclick=function(){
+
+  if(settingsPanel.style.display==="block"){
+    settingsPanel.style.display="none";
+  }else{
+    settingsPanel.style.display="block";
+  }
+};
+
+/* LOAD SETTINGS */
+
+function applySettings(){
+
+  /* WEATHER */
+  document.getElementById("weatherWidget").style.display=
+    astraSettings.weather ? "flex" : "none";
+
+  /* WALLPAPER */
+  document.getElementById("wallpaperBar").style.display=
+    astraSettings.wallpaper ? "flex" : "none";
+
+  /* GITHUB */
+  githubButton.style.display=
+    astraSettings.github ? "flex" : "none";
+
+  /* DARK / LIGHT */
+
+  if(astraSettings.dark){
+
+    document.body.style.color="white";
+
+  }else{
+
+    document.body.style.color="black";
+    document.body.style.background="#f3f3f3";
+  }
+
+  /* RAINBOW */
+
+  if(astraSettings.rainbow){
+
+    document.body.classList.add("rainbowMode");
+
+  }else{
+
+    document.body.classList.remove("rainbowMode");
+  }
+
+  /* ACCENT */
+
+  document.documentElement.style.setProperty(
+    "--accent",
+    astraSettings.accent
+  );
+
+  saveSettings();
+}
+
+function saveSettings(){
+
+  localStorage.setItem(
+    "astra_settings",
+    JSON.stringify(astraSettings)
+  );
+}
+
+/* TOGGLES */
+
+document.getElementById("toggleWeather").onchange=function(e){
+
+  astraSettings.weather=e.target.checked;
+
+  applySettings();
+};
+
+document.getElementById("toggleWallpaper").onchange=function(e){
+
+  astraSettings.wallpaper=e.target.checked;
+
+  applySettings();
+};
+
+document.getElementById("toggleGithub").onchange=function(e){
+
+  astraSettings.github=e.target.checked;
+
+  applySettings();
+};
+
+document.getElementById("darkThemeToggle").onchange=function(e){
+
+  astraSettings.dark=e.target.checked;
+
+  applySettings();
+};
+
+document.getElementById("rainbowToggle").onchange=function(e){
+
+  astraSettings.rainbow=e.target.checked;
+
+  applySettings();
+};
+
+document.getElementById("accentPicker").oninput=function(e){
+
+  astraSettings.accent=e.target.value;
+
+  applySettings();
+};
+
+/* INITIALIZE */
+
+document.getElementById("toggleWeather").checked=
+  astraSettings.weather;
+
+document.getElementById("toggleWallpaper").checked=
+  astraSettings.wallpaper;
+
+document.getElementById("toggleGithub").checked=
+  astraSettings.github;
+
+document.getElementById("darkThemeToggle").checked=
+  astraSettings.dark;
+
+document.getElementById("rainbowToggle").checked=
+  astraSettings.rainbow;
+
+document.getElementById("accentPicker").value=
+  astraSettings.accent;
+
+applySettings();
+  
 </script>
 <div id="wallpaperBar">
 
@@ -1286,6 +1553,46 @@ if(savedWallpaper){
   </button>
 
 </div>
+
+  <!-- SETTINGS MENU BUTTON -->
+<div id="settingsMenuBtn">☰</div>
+
+<!-- SETTINGS PANEL -->
+<div id="settingsPanel">
+
+  <div class="settingsTitle">
+    Astra Settings
+  </div>
+
+  <div class="settingItem">
+    <span>Weather Widget</span>
+    <input type="checkbox" id="toggleWeather" checked>
+  </div>
+
+  <div class="settingItem">
+    <span>Wallpaper Bar</span>
+    <input type="checkbox" id="toggleWallpaper" checked>
+  </div>
+
+  <div class="settingItem">
+    <span>GitHub Button</span>
+    <input type="checkbox" id="toggleGithub" checked>
+  </div>
+
+  <div class="settingItem">
+    <span>Dark Theme</span>
+    <input type="checkbox" id="darkThemeToggle" checked>
+  </div>
+
+  <div class="settingItem">
+    <span>Rainbow Mode</span>
+    <input type="checkbox" id="rainbowToggle">
+  </div>
+
+  <div class="settingItem">
+    <span>Accent Color</span>
+    <input type="color" id="accentPicker" value="#4b7bff">
+  </div>
   
   <a 
   href="https://github.com/V-Dev-arch/Astra-Tv-Browser-Homepage-.git"
