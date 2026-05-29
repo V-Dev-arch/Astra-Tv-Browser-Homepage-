@@ -201,15 +201,114 @@ button{
 }
 
 #voiceBtn{
-  width:44px;
-  height:44px;
+  width:52px;
+  height:52px;
   border-radius:50%;
-  background:#4b7bff;
+  border:none;
+  cursor:pointer;
+
+  background:linear-gradient(145deg,#3b82ff,#6d5cff);
+
   display:flex;
   align-items:center;
   justify-content:center;
-  cursor:pointer;
-  border:none;
+
+  position:relative;
+  overflow:hidden;
+
+  box-shadow:
+    0 0 18px rgba(75,123,255,.7),
+    inset 0 0 10px rgba(255,255,255,.15);
+
+  transition:0.2s;
+}
+
+#voiceBtn:hover{
+  transform:scale(1.08);
+}
+
+#voiceBtn.listening{
+  animation:micPulse 1s infinite;
+}
+
+.micGlow{
+  position:relative;
+  width:20px;
+  height:26px;
+}
+
+.micBody{
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:12px;
+  height:18px;
+  border:2px solid white;
+  border-radius:10px;
+}
+
+.micStem{
+  position:absolute;
+  bottom:4px;
+  left:50%;
+  transform:translateX(-50%);
+  width:2px;
+  height:8px;
+  background:white;
+}
+
+.micBase{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:14px;
+  height:6px;
+  border:2px solid white;
+  border-top:none;
+  border-radius:0 0 10px 10px;
+}
+
+.pulseRing{
+  position:absolute;
+  inset:-10px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.4);
+  animation:ringPulse 2s infinite;
+}
+
+@keyframes ringPulse{
+  0%{
+    transform:scale(.7);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(1.5);
+    opacity:0;
+  }
+}
+
+@keyframes micPulse{
+  0%{
+    box-shadow:
+      0 0 10px rgba(75,123,255,.6),
+      0 0 20px rgba(75,123,255,.5);
+  }
+
+  50%{
+    box-shadow:
+      0 0 20px rgba(0,255,255,.9),
+      0 0 35px rgba(0,255,255,.7);
+  }
+
+  100%{
+    box-shadow:
+      0 0 10px rgba(75,123,255,.6),
+      0 0 20px rgba(75,123,255,.5);
+  }
+}
                        }
 </style>
 </head>
@@ -277,36 +376,12 @@ function icon(url){
 /* VOICE SEARCH */
 const voiceBtn=document.getElementById("voiceBtn");
 voiceBtn.innerHTML = `
-  <span style="
-    position:relative;
-    display:inline-block;
-    width:14px;
-    height:22px;
-    border:2px solid white;
-    border-radius:10px;
-  ">
-    <span style="
-      position:absolute;
-      bottom:-8px;
-      left:50%;
-      transform:translateX(-50%);
-      width:2px;
-      height:8px;
-      background:white;
-    "></span>
-
-    <span style="
-      position:absolute;
-      bottom:-12px;
-      left:50%;
-      transform:translateX(-50%);
-      width:12px;
-      height:6px;
-      border:2px solid white;
-      border-top:none;
-      border-radius:0 0 10px 10px;
-    "></span>
-  </span>
+  <div class="micGlow">
+    <div class="micBody"></div>
+    <div class="micStem"></div>
+    <div class="micBase"></div>
+    <div class="pulseRing"></div>
+  </div>
 `;
 
 voiceBtn.onclick=function(){
@@ -328,7 +403,7 @@ voiceBtn.onclick=function(){
 
   recognition.start();
 
-  voiceBtn.innerText="🎙️";
+  voiceBtn.classList.add("listening");
 
   recognition.onresult=function(event){
 
@@ -343,7 +418,7 @@ voiceBtn.onclick=function(){
 
   recognition.onend=function(){
 
-    voiceBtn.innerText="🎤";
+    voiceBtn.classList.remove("listening");
   };
 
   recognition.onerror=function(){
