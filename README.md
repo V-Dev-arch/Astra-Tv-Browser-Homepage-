@@ -145,11 +145,6 @@ Note: All future updates will be shown in this table only.
     <td>29 May 2026</td>
     <td>Added Custom Background Support Using Image URLs</td>
   </tr>
-
-  <tr>
-    <td>29 May 2026</td>
-    <td>Mobile Support Discontinued Due to Technical Limitations</td>
-  </tr>
   
 </table>
 
