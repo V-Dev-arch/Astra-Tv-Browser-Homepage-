@@ -137,6 +137,11 @@ Note: All future updates will be shown in this table only.
     <td>29 May 2026</td>
     <td>Made Voice Search Glowing And Fixed Bugs</td>
   </tr>
+
+    <tr>
+    <td>29 May 2026</td>
+    <td>Added Weather Widget</td>
+  </tr>
   
 </table>
 
