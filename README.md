@@ -385,11 +385,6 @@ ems
 
 ---
 
-🎞️ Dynamic Wallpapers
-
-Animated and video-based TV backgrounds.
-
----
 
 🎨 Theme Engine
 
@@ -400,12 +395,6 @@ Custom themes and color systems.
 🤖 Smart Recommendations
 
 AI-powered shortcuts and suggestions.
-
----
-
-📺 Streaming Integrations
-
-Quick access to streaming platforms.
 
 ---
 
