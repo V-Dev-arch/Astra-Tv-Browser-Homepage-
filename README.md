@@ -376,7 +376,7 @@ UI:
 
 📸 Website Preview
 
-<div align="center"><img src="https://files.catbox.moe/bhayi6.jpg" width="950"></div>---
+<div align="center"><img src="https://files.catbox.moe/fp7uat.jpg" width="950"></div>---
 
 🚀 Past Updates
 
