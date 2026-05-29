@@ -38,6 +38,7 @@ Astra transforms ordinary TV browsers into a modern dashboard-style interface.
  - Full Keyboard Support
  - Full Virtual and Physical Mouse Support
  - Full Game Controller Support
+ - Full Touchscreen Support 
 
 
 Astra includes a fully custom TV navigation engine designed for D-pad movement systems.
@@ -107,7 +108,7 @@ Input Method| Compatibility
 TV Remote| ✅
 Mouse| ✅
 Keyboard| ✅
-Game Controller| ✅
+Game Controller| ✅ | Touchscreen 
 
 ---
 
@@ -167,7 +168,7 @@ Chromecast With Google TV| ✅ Supported
 Nvidia Shield TV| ✅ Supported
 Android TV Boxes| ✅ Supported
 Smart TVs| ✅ Compatible
-Desktop Browsers| ✅ | Computer
+Desktop Browsers| ✅ | Computer | Mobile (⚠️Only in landscape, desktop site enabled and zoomed out) ✅
 
 BASICALLY ALL YOU NEED IS TO HAVE A GOOD BROWSER TO RUN IT
 
