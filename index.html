@@ -443,6 +443,61 @@ button{
     opacity:0;
   }
 }
+
+  #wallpaperBar{
+  position:fixed;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+
+  display:flex;
+  gap:10px;
+  align-items:center;
+
+  padding:12px 14px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(12px);
+
+  border:1px solid rgba(255,255,255,0.15);
+
+  box-shadow:0 0 15px rgba(0,0,0,0.35);
+
+  z-index:99999;
+}
+
+#wallpaperInput{
+  width:240px;
+
+  padding:10px 12px;
+
+  border:none;
+
+  border-radius:10px;
+
+  outline:none;
+
+  background:rgba(255,255,255,0.12);
+
+  color:white;
+}
+
+#wallpaperBar button{
+  padding:10px 14px;
+
+  border:none;
+
+  border-radius:10px;
+
+  background:#4b7bff;
+
+  color:white;
+
+  cursor:pointer;
+}
                        }
 </style>
 </head>
@@ -1172,7 +1227,66 @@ setTimeout(function(){
   if(!introDone) showIntro();
   else showHomepagePopup();
 },700);
+  /* WALLPAPER SYSTEM */
+
+function setWallpaper(){
+
+  let url=document
+    .getElementById("wallpaperInput")
+    .value
+    .trim();
+
+  if(!url) return;
+
+  document.body.style.background=
+    `url('${url}') center/cover no-repeat fixed`;
+
+  localStorage.setItem(
+    "astra_wallpaper",
+    url
+  );
+}
+
+function resetWallpaper(){
+
+  localStorage.removeItem(
+    "astra_wallpaper"
+  );
+
+  document.body.style.background=
+    "radial-gradient(circle at top,#0b1020,#05070f)";
+}
+
+/* LOAD SAVED WALLPAPER */
+
+let savedWallpaper=
+  localStorage.getItem(
+    "astra_wallpaper"
+  );
+
+if(savedWallpaper){
+
+  document.body.style.background=
+    `url('${savedWallpaper}') center/cover no-repeat fixed`;
+}
 </script>
+<div id="wallpaperBar">
+
+  <input
+    id="wallpaperInput"
+    placeholder="Paste wallpaper image URL..."
+  >
+
+  <button onclick="setWallpaper()">
+    Set
+  </button>
+
+  <button onclick="resetWallpaper()">
+    Reset
+  </button>
+
+</div>
+  
   <a 
   href="https://github.com/V-Dev-arch/Astra-Tv-Browser-Homepage-.git"
   target="_blank"
