@@ -309,6 +309,140 @@ button{
       0 0 20px rgba(75,123,255,.5);
   }
 }
+
+  /* WEATHER WIDGET */
+#weatherWidget{
+  position:fixed;
+  bottom:18px;
+  left:18px;
+
+  min-width:220px;
+  max-width:260px;
+
+  padding:14px 16px;
+  border-radius:18px;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(14px);
+
+  border:1px solid rgba(255,255,255,0.12);
+
+  box-shadow:
+    0 0 18px rgba(0,0,0,0.28),
+    inset 0 0 8px rgba(255,255,255,0.05);
+
+  z-index:99999;
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  transition:0.25s;
+}
+
+#weatherWidget:hover{
+  transform:scale(1.03);
+}
+
+.weatherIconWrap{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+
+  background:linear-gradient(145deg,#3b82ff,#6d5cff);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  position:relative;
+
+  box-shadow:
+    0 0 16px rgba(75,123,255,.55),
+    inset 0 0 8px rgba(255,255,255,.12);
+}
+
+.weatherPulse{
+  position:absolute;
+  inset:-6px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.25);
+
+  animation:weatherPulse 2s infinite;
+}
+
+.weatherCloud{
+  position:relative;
+  width:24px;
+  height:12px;
+
+  background:white;
+  border-radius:20px;
+}
+
+.weatherCloud::before{
+  content:"";
+
+  position:absolute;
+  top:-7px;
+  left:2px;
+
+  width:11px;
+  height:11px;
+
+  background:white;
+  border-radius:50%;
+}
+
+.weatherCloud::after{
+  content:"";
+
+  position:absolute;
+  top:-10px;
+  right:1px;
+
+  width:14px;
+  height:14px;
+
+  background:white;
+  border-radius:50%;
+}
+
+.weatherInfo{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+#weatherTemp{
+  font-size:22px;
+  font-weight:bold;
+  color:white;
+}
+
+#weatherCity{
+  font-size:14px;
+  color:#cfcfcf;
+  margin-top:2px;
+}
+
+#weatherDesc{
+  font-size:13px;
+  color:#9fd3ff;
+  margin-top:3px;
+}
+
+@keyframes weatherPulse{
+  0%{
+    transform:scale(.8);
+    opacity:1;
+  }
+
+  100%{
+    transform:scale(1.45);
+    opacity:0;
+  }
+}
                        }
 </style>
 </head>
@@ -956,6 +1090,82 @@ function render(){
   updateFocusableElements();
 }
 
+  /* WEATHER */
+async function loadWeather(lat,lon){
+
+  try{
+
+    const res=await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
+    );
+
+    const data=await res.json();
+
+    const temp=data.current_weather.temperature;
+    const code=data.current_weather.weathercode;
+
+    let desc="Clear";
+
+    if(code>=1 && code<=3) desc="Cloudy";
+    if(code>=45) desc="Fog";
+    if(code>=51) desc="Drizzle";
+    if(code>=61) desc="Rain";
+    if(code>=71) desc="Snow";
+    if(code>=95) desc="Storm";
+
+    document.getElementById("weatherTemp").innerText=
+      temp + "°C";
+
+    document.getElementById("weatherDesc").innerText=
+      desc;
+
+  }catch(err){
+
+    document.getElementById("weatherTemp").innerText=
+      "--";
+
+    document.getElementById("weatherDesc").innerText=
+      "Weather unavailable";
+  }
+}
+
+function startWeather(){
+
+  if(!navigator.geolocation){
+
+    document.getElementById("weatherCity").innerText=
+      "Location unsupported";
+
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    async(position)=>{
+
+      const lat=position.coords.latitude;
+      const lon=position.coords.longitude;
+
+      document.getElementById("weatherCity").innerText=
+        "Your Location";
+
+      loadWeather(lat,lon);
+    },
+
+    ()=>{
+
+      document.getElementById("weatherCity").innerText=
+        "Location denied";
+
+      document.getElementById("weatherTemp").innerText=
+        "--";
+    }
+
+  );
+}
+
+startWeather();
+
 render();
 
 setTimeout(function(){
@@ -998,6 +1208,18 @@ setTimeout(function(){
   >
   GitHub
 </a>
+ <div id="weatherWidget">
+
+  <div class="weatherIconWrap">
+    <div class="weatherPulse"></div>
+    <div class="weatherCloud"></div>
+  </div>
+
+  <div class="weatherInfo">
+    <div id="weatherTemp">Loading...</div>
+    <div id="weatherCity">Detecting location</div>
+    <div id="weatherDesc">Weather</div>
+  </div>
 
 </body>
   </html>
