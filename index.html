@@ -1474,6 +1474,23 @@ document.getElementById("githubToggle").onchange=function(){
     </label>
   </div>
 
+  <script>
+window.addEventListener("load", function(){
+
+  const menuBtn = document.getElementById("menuBtn");
+
+  if(!menuBtn){
+    alert("menuBtn not found");
+    return;
+  }
+
+  menuBtn.onclick = function(){
+    alert("Menu clicked");
+  };
+
+});
+  </script>   
+     
 </body>
   </html>
       
