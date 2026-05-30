@@ -498,7 +498,67 @@ button{
 
   cursor:pointer;
 }
-                       }
+
+  #menuBtn{
+  position:fixed;
+  bottom:18px;
+
+  left:calc(50% + 290px);
+
+  width:56px;
+  height:56px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+
+  border:1px solid rgba(255,255,255,0.15);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:white;
+  font-size:28px;
+
+  cursor:pointer;
+
+  z-index:99999;
+
+  box-shadow:0 0 15px rgba(0,0,0,.35);
+}
+
+#menuBtn:hover{
+  transform:scale(1.05);
+}
+
+  #settingsPanel{
+  position:fixed;
+
+  bottom:85px;
+  right:20px;
+
+  width:250px;
+
+  background:#121212;
+
+  border-radius:16px;
+
+  padding:15px;
+
+  display:none;
+
+  z-index:100000;
+
+  box-shadow:0 0 20px rgba(0,0,0,.5);
+}
+
+.settingRow{
+  margin:12px 0;
+  color:white;
+}
+  
 </style>
 </head>
 
@@ -1269,6 +1329,53 @@ if(savedWallpaper){
   document.body.style.background=
     `url('${savedWallpaper}') center/cover no-repeat fixed`;
 }
+
+  const menuBtn=document.getElementById("menuBtn");
+const settingsPanel=document.getElementById("settingsPanel");
+
+menuBtn.onclick=function(){
+  settingsPanel.style.display=
+    settingsPanel.style.display==="block"
+      ? "none"
+      : "block";
+};
+
+/* WEATHER */
+
+document.getElementById("weatherToggle").onchange=function(){
+
+  document.getElementById("weatherWidget").style.display=
+    this.checked ? "flex" : "none";
+};
+
+/* WALLPAPER */
+
+document.getElementById("wallpaperToggle").onchange=function(){
+
+  document.getElementById("wallpaperBar").style.display=
+    this.checked ? "flex" : "none";
+};
+
+/* REMOTE BUTTON */
+
+document.getElementById("remoteToggleSetting").onchange=function(){
+
+  document.getElementById("remoteToggle").style.display=
+    this.checked ? "flex" : "none";
+};
+
+/* GITHUB */
+
+document.getElementById("githubToggle").onchange=function(){
+
+  const github=document.querySelector('a[href*="github"]');
+
+  if(github){
+    github.style.display=
+      this.checked ? "flex" : "none";
+  }
+};
+  
 </script>
 <div id="wallpaperBar">
 
@@ -1322,6 +1429,8 @@ if(savedWallpaper){
   >
   GitHub
 </a>
+  <div id="menuBtn">☰</div>
+  
  <div id="weatherWidget">
 
   <div class="weatherIconWrap">
@@ -1333,6 +1442,36 @@ if(savedWallpaper){
     <div id="weatherTemp">Loading...</div>
     <div id="weatherCity">Detecting location</div>
     <div id="weatherDesc">Weather</div>
+  </div>
+
+   <div id="settingsPanel">
+
+  <div class="settingRow">
+    <label>
+      <input type="checkbox" id="weatherToggle" checked>
+      Weather Widget
+    </label>
+  </div>
+
+  <div class="settingRow">
+    <label>
+      <input type="checkbox" id="wallpaperToggle" checked>
+      Wallpaper Bar
+    </label>
+  </div>
+
+  <div class="settingRow">
+    <label>
+      <input type="checkbox" id="remoteToggleSetting" checked>
+      Remote Toggle
+    </label>
+  </div>
+
+  <div class="settingRow">
+    <label>
+      <input type="checkbox" id="githubToggle" checked>
+      GitHub Button
+    </label>
   </div>
 
 </body>
