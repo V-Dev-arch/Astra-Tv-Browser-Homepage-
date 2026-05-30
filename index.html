@@ -1429,8 +1429,7 @@ document.getElementById("githubToggle").onchange=function(){
   >
   GitHub
 </a>
-  <div id="menuBtn">☰</div>
-  
+  <div id="menuBtn" onclick="alert('clicked')">☰</div>
  <div id="weatherWidget">
 
   <div class="weatherIconWrap">
@@ -1473,23 +1472,6 @@ document.getElementById("githubToggle").onchange=function(){
       GitHub Button
     </label>
   </div>
-
-  <script>
-window.addEventListener("load", function(){
-
-  const menuBtn = document.getElementById("menuBtn");
-
-  if(!menuBtn){
-    alert("menuBtn not found");
-    return;
-  }
-
-  menuBtn.onclick = function(){
-    alert("Menu clicked");
-  };
-
-});
-  </script>   
      
 </body>
   </html>
