@@ -498,7 +498,114 @@ button{
 
   cursor:pointer;
 }
-                       }
+
+  /* SETTINGS BUTTON */
+#settingsBtn{
+  position:fixed;
+  bottom:18px;
+  right:140px;
+
+  width:48px;
+  height:48px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:24px;
+  color:white;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+
+  border-radius:12px;
+  cursor:pointer;
+
+  border:1px solid rgba(255,255,255,0.15);
+
+  z-index:99999;
+}
+
+/* PANEL */
+#settingsPanel{
+  position:fixed;
+  bottom:75px;
+  right:18px;
+
+  width:280px;
+
+  background:#111;
+  border-radius:16px;
+
+  padding:14px;
+
+  display:none;
+
+  z-index:99999;
+
+  box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+.settingRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:10px 0;
+
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.settingRow:last-child{
+  border-bottom:none;
+}
+
+/* SWITCH */
+.switch{
+  position:relative;
+  width:50px;
+  height:26px;
+}
+
+.switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+
+  background:#555;
+  border-radius:20px;
+
+  transition:.25s;
+}
+
+.slider:before{
+  content:"";
+
+  position:absolute;
+
+  width:20px;
+  height:20px;
+
+  left:3px;
+  top:3px;
+
+  background:white;
+  border-radius:50%;
+
+  transition:.25s;
+}
+
+.switch input:checked + .slider{
+  background:#4b7bff;
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(24px);
+}
+                       
 </style>
 </head>
 
@@ -1024,11 +1131,12 @@ function updateFocusableElements(){
   clearFocus();
 
   const searchElements=[
-    searchBar,
-    document.querySelectorAll("#searchWrap button")[0],
-    urlBar,
-    document.querySelectorAll("#searchWrap button")[1]
-  ];
+  searchBar,
+  document.querySelectorAll("#topBar button")[0],
+  voiceBtn,
+  urlBar,
+  document.querySelectorAll("#topBar button")[1]
+];
 
   const categoryElements=document.querySelectorAll(".category");
   const categoryDots=document.querySelectorAll(".catDots");
@@ -1084,7 +1192,7 @@ function updateFocusableElements(){
   }
 
   if(currentSection==="search"){
-    if(e.key==="ArrowRight" && searchIndex<3) searchIndex++;
+    if(e.key==="ArrowRight" && searchIndex<4) searchIndex++;
     else if(e.key==="ArrowLeft" && searchIndex>0) searchIndex--;
     else if(e.key==="ArrowDown") currentSection="categories";
   }
@@ -1269,6 +1377,56 @@ if(savedWallpaper){
   document.body.style.background=
     `url('${savedWallpaper}') center/cover no-repeat fixed`;
 }
+const settingsBtn=document.getElementById("settingsBtn");
+const settingsPanel=document.getElementById("settingsPanel");
+
+settingsBtn.onclick=function(){
+
+  settingsPanel.style.display=
+    settingsPanel.style.display==="block"
+      ? "none"
+      : "block";
+};
+
+/* WEATHER */
+document.getElementById("weatherToggle").onchange=function(){
+
+  const w=document.getElementById("weatherWidget");
+
+  if(w){
+    w.style.display=this.checked ? "flex" : "none";
+  }
+};
+
+/* WALLPAPER BAR */
+document.getElementById("wallpaperToggle").onchange=function(){
+
+  const w=document.getElementById("wallpaperBar");
+
+  if(w){
+    w.style.display=this.checked ? "flex" : "none";
+  }
+};
+
+/* GITHUB */
+document.getElementById("githubToggle").onchange=function(){
+
+  const g=document.querySelector('a[href*="github"]');
+
+  if(g){
+    g.style.display=this.checked ? "flex" : "none";
+  }
+};
+
+/* REMOTE BUTTON */
+document.getElementById("remoteBtnToggle").onchange=function(){
+
+  if(remoteToggle){
+    remoteToggle.style.display=
+      this.checked ? "flex" : "none";
+  }
+};
+  
 </script>
 <div id="wallpaperBar">
 
@@ -1333,6 +1491,44 @@ if(savedWallpaper){
     <div id="weatherTemp">Loading...</div>
     <div id="weatherCity">Detecting location</div>
     <div id="weatherDesc">Weather</div>
+  </div>
+
+   <!-- SETTINGS BUTTON -->
+<div id="settingsBtn">☰</div>
+
+<!-- SETTINGS PANEL -->
+<div id="settingsPanel">
+
+  <div class="settingRow">
+    <span>Weather Widget</span>
+    <label class="switch">
+      <input type="checkbox" id="weatherToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="settingRow">
+    <span>Wallpaper URL Bar</span>
+    <label class="switch">
+      <input type="checkbox" id="wallpaperToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="settingRow">
+    <span>GitHub Button</span>
+    <label class="switch">
+      <input type="checkbox" id="githubToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="settingRow">
+    <span>Remote Nav Button</span>
+    <label class="switch">
+      <input type="checkbox" id="remoteBtnToggle" checked>
+      <span class="slider"></span>
+    </label>
   </div>
 
 </body>
