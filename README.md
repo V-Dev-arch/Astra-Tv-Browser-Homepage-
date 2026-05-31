@@ -365,13 +365,15 @@ UI:
 
 📸 Website Preview
 
-<div align="center"><img src="https://files.catbox.moe/fp7uat.jpg" width="950"></div>---
+WITHOUT CUSTOM BACKGROUND 
+
+<div align="center"><img src="https://files.catbox.moe/ce7zya.jpg" width="950"></div>---
+
+WITH CUSTOM BACKGROUND 
+
+<div align="center"><img src="https://files.catbox.moe/dd3v2i.jpg" width="950"></div>---
 
 
-
----
-
-ems
 
 ---
 
