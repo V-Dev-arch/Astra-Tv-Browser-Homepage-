@@ -416,7 +416,7 @@ WITHOUT CUSTOM BACKGROUND
 
 WITH CUSTOM BACKGROUND 
 
-<div align="center"><img src="https://files.catbox.moe/dd3v2i.jpg" width="950"></div>---
+<div align="center"><img src="https://files.catbox.moe/1etxn9.png" width="950"></div>---
 
 
 
