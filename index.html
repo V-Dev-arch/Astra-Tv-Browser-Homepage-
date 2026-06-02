@@ -337,10 +337,23 @@ button{
 }
 
   /* WEATHER WIDGET */
-#weatherWidget{
+#cornerStack{
   position:fixed;
   bottom:18px;
   left:18px;
+  z-index:99999;
+
+  display:flex;
+  flex-direction:column;   /* sync button on top, weather box below */
+  align-items:flex-start;  /* each box keeps its own width */
+  gap:14px;
+
+  pointer-events:none;     /* the empty gap between them never blocks clicks... */
+}
+#cornerStack > *{ pointer-events:auto; }   /* ...but the boxes stay clickable */
+
+#weatherWidget{
+  position:relative;   /* placed by #cornerStack now */
 
   min-width:220px;
   max-width:260px;
@@ -1677,6 +1690,15 @@ if(savedWallpaper){
   >
   GitHub
 </a>
+ <!-- Bottom-left stack: the sign-in / sync button sits ABOVE the weather widget.
+      Flexbox keeps them apart automatically; if the weather widget is hidden,
+      the button simply drops into the corner. -->
+ <div id="cornerStack">
+
+ <div id="cloudBtn" tabindex="0" role="button" aria-label="Cloud sync settings">
+   <span class="cloudIcon">&#9729;</span><span id="cloudBtnText">Sign in to Sync</span>
+ </div>
+
  <div id="weatherWidget">
 
   <div class="weatherIconWrap">
@@ -1691,6 +1713,8 @@ if(savedWallpaper){
   </div>
 
 </div>
+
+ </div>
 
 <!-- ===== QUICK SETTINGS: 3-line menu to show / hide floating widgets ===== -->
 <div id="widgetMenuBtn" title="Show / hide widgets" aria-label="Show or hide widgets">
@@ -2384,6 +2408,389 @@ GOOD TO KNOW / TROUBLESHOOTING:
     e.stopImmediatePropagation();   /* take precedence over the page's own Enter handler */
     el.click();
   }, true);                         /* capture phase: runs before the bubble-phase remote handler */
+})();
+</script>
+
+<!-- ============================================================= -->
+<!-- =============  ASTRA CLOUD SYNC  (optional, free)  ========== -->
+<!-- Local-first: by default everything stays on this device.      -->
+<!-- If the user signs in (free Puter account, same one used for   -->
+<!-- AI) their shortcuts, wallpaper & settings sync across devices. -->
+<!-- Purely additive: hooks the existing save() and re-uses Puter.  -->
+<!-- https://developer.puter.com  (puter.kv + puter.auth)           -->
+<!-- ============================================================= -->
+<style>
+#cloudBtn{
+  /* position handled by #cornerStack flexbox (sits above the weather box) */
+  display:flex; align-items:center; gap:8px;
+  padding:10px 16px; border-radius:14px;
+  font-family:Arial; font-size:15px; font-weight:bold; letter-spacing:.3px;
+  color:#fff; cursor:pointer; user-select:none;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 0 15px rgba(0,0,0,0.35);
+  transition:transform .2s, box-shadow .2s, background .25s;
+}
+#cloudBtn:hover{ transform:scale(1.05); }
+#cloudBtn:active{ transform:scale(.97); }
+#cloudBtn.synced{
+  background:linear-gradient(135deg,#00d2ff,#3a47d5);
+  box-shadow:0 0 18px rgba(0,210,255,.45), inset 0 0 10px rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.18);
+}
+#cloudBtn:focus, #cloudBtn:focus-visible{
+  outline:3px solid #4b7bff; outline-offset:2px;
+  box-shadow:0 0 18px rgba(75,123,255,.7);
+}
+#cloudBtn .cloudIcon{ font-size:18px; display:inline-block; }
+#cloudBtn.syncing .cloudIcon{ animation:cloudSpin 1s linear infinite; }
+@keyframes cloudSpin{ to{ transform:rotate(360deg); } }
+
+#cloudOverlay{
+  position:fixed; inset:0; z-index:100070;
+  background:rgba(0,0,0,.55); backdrop-filter:blur(3px);
+  display:none; justify-content:center; align-items:center;
+}
+#cloudOverlay.open{ display:flex; }
+#cloudPanel{
+  width:min(380px,92vw);
+  background:rgba(15,17,27,.96); backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.14); border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 22px rgba(0,210,255,.16);
+  font-family:Arial; color:#fff; overflow:hidden;
+}
+.cloudHead{
+  display:flex; align-items:center; gap:10px;
+  padding:18px 18px 14px; border-bottom:1px solid rgba(255,255,255,.1);
+}
+.cloudHead .cloudTitle{
+  font-size:18px; font-weight:bold; letter-spacing:.5px; flex:1;
+  background:linear-gradient(90deg,#00ffff,#6d5cff);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.cloudClose{
+  width:36px; height:36px; border-radius:10px; cursor:pointer;
+  background:rgba(255,255,255,.08); color:#fff; font-size:16px;
+  border:1px solid rgba(255,255,255,.12);
+  display:flex; align-items:center; justify-content:center; transition:.18s;
+}
+.cloudClose:hover{ background:rgba(255,255,255,.16); }
+.cloudBody{ padding:16px 18px 20px; }
+.cloudStatus{
+  font-size:14px; line-height:1.55; color:#cfe9ff;
+  background:rgba(0,210,255,.08); border:1px solid rgba(0,210,255,.18);
+  border-radius:12px; padding:12px 14px; margin-bottom:16px;
+}
+.cloudStatus b{ color:#fff; }
+.cloudOpt{
+  position:relative; display:block; width:100%; text-align:left;
+  padding:14px 16px; margin-bottom:10px;
+  border-radius:14px; cursor:pointer; font-family:Arial;
+  border:1px solid rgba(255,255,255,.12); color:#fff;
+  background:rgba(255,255,255,.06); transition:.18s;
+}
+.cloudOpt:hover{ background:rgba(255,255,255,.13); transform:translateY(-1px); }
+.cloudOpt:focus, .cloudOpt:focus-visible{ outline:3px solid #4b7bff; outline-offset:2px; }
+.cloudOpt .t{ font-size:15px; font-weight:bold; display:block; }
+.cloudOpt .d{ font-size:12.5px; color:#9fb0c8; margin-top:3px; display:block; line-height:1.45; }
+.cloudOpt.primary{
+  background:linear-gradient(135deg,#00d2ff,#3a47d5);
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 0 16px rgba(0,210,255,.35);
+}
+.cloudOpt.primary:hover{ box-shadow:0 0 24px rgba(0,210,255,.55); }
+.cloudOpt.primary .d{ color:#e8f6ff; }
+.cloudOpt.danger{ color:#ff8d8d; border-color:rgba(255,90,90,.3); }
+.cloudOpt.danger:hover{ background:rgba(255,90,90,.14); }
+.cloudActive{
+  position:absolute; top:12px; right:12px;
+  font-size:10px; font-weight:bold; letter-spacing:.5px; text-transform:uppercase;
+  color:#06210f; background:#39d98a; padding:3px 8px; border-radius:20px;
+}
+.cloudNote{ font-size:11.5px; color:#7f8ba3; margin-top:6px; line-height:1.5; text-align:center; }
+</style>
+
+<!-- The "Sign in to Sync" button now lives inside #cornerStack (next to the
+     weather widget) so the two stack cleanly and can never overlap. -->
+
+<div id="cloudOverlay">
+  <div id="cloudPanel" onclick="event.stopPropagation()">
+    <div class="cloudHead">
+      <div class="cloudTitle">&#9729; Cloud Sync</div>
+      <button class="cloudClose" id="cloudClose" tabindex="0" aria-label="Close">&#10005;</button>
+    </div>
+    <div class="cloudBody" id="cloudBody"></div>
+  </div>
+</div>
+
+<script>
+/* ===== ASTRA CLOUD SYNC =====================================================
+   Local-first storage with optional cloud sync via Puter (puter.kv + puter.auth).
+   - Default mode is "local": nothing is uploaded, no account, no sign-in popup.
+   - "cloud" mode: the same keys we already keep in localStorage are mirrored to
+     the user's Puter account, so the homepage follows them across devices.
+   Conflict rule: newest-wins (by timestamp). On login, if the cloud copy is
+   newer than this device, we apply it and reload so the page renders fresh.
+   This block edits NOTHING above it: it just wraps the global save() to also
+   push to the cloud, and re-uses the Puter SDK already loaded for the AI.
+   =========================================================================== */
+(function(){
+  var SYNC_KEYS = ["astra","astra_wallpaper","astra_mv","astra_ai_voice",
+                   "astra_show_weather","astra_show_remote","astra_show_github","astra_show_wallpaper"];
+  var CLOUD_KEY = "astra_cloud_v1";     // single bundle key in the cloud
+  var MODE_KEY  = "astra_storage_mode"; // "local" | "cloud"
+  var STAMP_KEY = "astra_saved_at";     // last local change time (ms)
+  var PUSH_MS   = 1500;                 // debounce for background pushes
+
+  var signedInCache = false;            // best-effort flag for unload-time push
+
+  function hasPuter(){ return typeof puter !== "undefined" && puter && puter.auth; }
+  function getMode(){ return localStorage.getItem(MODE_KEY) === "cloud" ? "cloud" : "local"; }
+  function setMode(m){ try{ localStorage.setItem(MODE_KEY, m === "cloud" ? "cloud" : "local"); }catch(e){} }
+  function localStamp(){ return Number(localStorage.getItem(STAMP_KEY) || 0); }
+  function touchStamp(){ try{ localStorage.setItem(STAMP_KEY, String(Date.now())); }catch(e){} }
+
+  /* ---- bundle <-> localStorage ---- */
+  function readLocalBundle(){
+    var d = {};
+    SYNC_KEYS.forEach(function(k){
+      var v = localStorage.getItem(k);
+      if(v !== null) d[k] = v;
+    });
+    return { v:1, savedAt: localStamp() || Date.now(), data:d };
+  }
+  function writeBundleToLocal(bundle){
+    if(!bundle || !bundle.data) return;
+    SYNC_KEYS.forEach(function(k){
+      if(Object.prototype.hasOwnProperty.call(bundle.data, k)){
+        try{ localStorage.setItem(k, bundle.data[k]); }catch(e){}
+      }
+    });
+    try{ localStorage.setItem(STAMP_KEY, String(bundle.savedAt || Date.now())); }catch(e){}
+  }
+
+  /* ---- auth helpers (all promise-safe) ---- */
+  function isSignedIn(){
+    if(!hasPuter()) return Promise.resolve(false);
+    try{
+      return Promise.resolve(puter.auth.isSignedIn())
+        .then(function(s){ signedInCache = !!s; return !!s; })
+        .catch(function(){ return false; });
+    }catch(e){ return Promise.resolve(false); }
+  }
+  function getUserName(){
+    if(!hasPuter() || !puter.auth.getUser) return Promise.resolve("");
+    try{
+      return Promise.resolve(puter.auth.getUser())
+        .then(function(u){ return (u && (u.username || u.email)) || ""; })
+        .catch(function(){ return ""; });
+    }catch(e){ return Promise.resolve(""); }
+  }
+
+  /* ---- cloud read / write ---- */
+  function cloudGet(){
+    if(!hasPuter() || !puter.kv) return Promise.resolve(null);
+    return Promise.resolve(puter.kv.get(CLOUD_KEY)).then(function(v){
+      if(!v) return null;
+      if(typeof v === "string"){ try{ return JSON.parse(v); }catch(e){ return null; } }
+      return v;
+    }).catch(function(){ return null; });
+  }
+  function cloudSet(bundle){
+    if(!hasPuter() || !puter.kv) return Promise.resolve(false);
+    return Promise.resolve(puter.kv.set(CLOUD_KEY, JSON.stringify(bundle)))
+      .then(function(){ return true; })
+      .catch(function(){ return false; });
+  }
+
+  /* ---- debounced background push (only when signed in + cloud mode) ---- */
+  var pushTimer = null;
+  function schedulePush(){
+    if(getMode() !== "cloud") return;
+    if(pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(function(){
+      pushTimer = null;
+      isSignedIn().then(function(s){
+        if(!s) return;
+        var b = readLocalBundle(); b.savedAt = localStamp() || Date.now();
+        cloudSet(b);
+      });
+    }, PUSH_MS);
+  }
+  function pushNow(){
+    return isSignedIn().then(function(s){
+      if(!s) return false;
+      var b = readLocalBundle(); b.savedAt = localStamp() || Date.now();
+      return cloudSet(b);
+    });
+  }
+
+  /* ---- merge on login: newest-wins. Resolves {doReload:boolean}. ---- */
+  function syncOnLogin(){
+    setBtnSyncing(true);
+    return cloudGet().then(function(cloud){
+      var localT = localStamp();
+      if(!cloud || !cloud.data){               // nothing in cloud yet -> seed it
+        var b = readLocalBundle();
+        if(!b.savedAt){ b.savedAt = Date.now(); touchStamp(); }
+        return cloudSet(b).then(function(){ setBtnSyncing(false); return { doReload:false }; });
+      }
+      var cloudT = Number(cloud.savedAt || 0);
+      if(cloudT > localT){                      // cloud is newer -> take it, reload to render
+        writeBundleToLocal(cloud);
+        return { doReload:true };
+      }
+      var lb = readLocalBundle(); lb.savedAt = localT || Date.now();  // local newer/equal -> push up
+      return cloudSet(lb).then(function(){ setBtnSyncing(false); return { doReload:false }; });
+    }).catch(function(){ setBtnSyncing(false); return { doReload:false }; });
+  }
+
+  /* ===================== UI ===================== */
+  var btn      = document.getElementById("cloudBtn");
+  var btnText  = document.getElementById("cloudBtnText");
+  var overlay  = document.getElementById("cloudOverlay");
+  var body     = document.getElementById("cloudBody");
+  var closeBtn = document.getElementById("cloudClose");
+
+  function setBtnSyncing(on){ btn.classList.toggle("syncing", !!on); }
+  function reflectButton(){
+    if(getMode() === "cloud"){
+      btn.classList.add("synced");
+      getUserName().then(function(n){ btnText.textContent = n ? ("Synced \u00B7 " + n) : "Cloud Sync On"; });
+    } else {
+      btn.classList.remove("synced");
+      btnText.textContent = "Sign in to Sync";
+    }
+  }
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+    return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]; }); }
+
+  function optHTML(id, cls, title, desc, active){
+    return '<button class="cloudOpt ' + (cls || "") + '" id="' + id + '" tabindex="0">' +
+           (active ? '<span class="cloudActive">Active</span>' : '') +
+           '<span class="t">' + title + '</span><span class="d">' + desc + '</span></button>';
+  }
+
+  function openPanel(){ overlay.classList.add("open"); buildPanel(); }
+  function closePanel(){ overlay.classList.remove("open"); }
+
+  function buildPanel(){
+    body.innerHTML = '<div class="cloudStatus">Checking\u2026</div>';
+    var mode = getMode();
+    isSignedIn().then(function(signed){
+      return (signed ? getUserName() : Promise.resolve("")).then(function(name){
+        var html = "";
+        if(mode === "cloud" && signed){
+          html += '<div class="cloudStatus">\u2601 Your homepage is <b>syncing to the cloud</b>' +
+                  (name ? ' as <b>' + esc(name) + '</b>' : '') +
+                  '. Your shortcuts, wallpaper and settings will follow you to any device where you sign in.</div>';
+          html += optHTML("cloudSyncNow", "primary", "\u21BB Sync now", "Push this device\u2019s latest changes to the cloud right now.");
+          html += optHTML("cloudLocal", "", "\uD83D\uDCBE Switch to this device only", "Stop syncing. Your data stays saved here on this device.");
+          html += optHTML("cloudSignOut", "danger", "\u23FB Sign out", "Sign out of your Puter account on this device.");
+        } else {
+          html += '<div class="cloudStatus">Right now your homepage is saved <b>only on this device</b>. ' +
+                  'Sign in to back it up and use the same shortcuts on your phone, TV or any other device.</div>';
+          html += optHTML("cloudSignIn", "primary", "\u2601 Sign in / Sign up to sync",
+                          "Free Puter account \u2014 saves your shortcuts &amp; settings to the cloud across devices.", false);
+          html += optHTML("cloudStayLocal", "", "\uD83D\uDCBE Use this device only (Local)",
+                          "No account needed. Everything stays on this device \u2014 nothing is uploaded.", mode === "local");
+          html += '<div class="cloudNote">Powered by Puter \u00B7 free, no API keys. You can switch anytime.</div>';
+        }
+        body.innerHTML = html;
+        wire();
+      });
+    });
+  }
+
+  function bind(id, fn){ var el = document.getElementById(id); if(el) el.addEventListener("click", fn); }
+  function wire(){
+    bind("cloudSignIn",   doSignIn);
+    bind("cloudStayLocal",function(){ setMode("local"); reflectButton(); closePanel(); });
+    bind("cloudSyncNow",  function(){ touchStamp(); flash("Syncing\u2026"); pushNow().then(function(ok){ flash(ok ? "Synced \u2713" : "Couldn\u2019t sync \u2014 try again"); }); });
+    bind("cloudLocal",    function(){ setMode("local"); reflectButton(); buildPanel(); });
+    bind("cloudSignOut",  doSignOut);
+  }
+
+  function doSignIn(){
+    if(!hasPuter()){ flash("Needs an internet connection. Check your connection and try again."); return; }
+    setBtnSyncing(true);
+    flash("Opening sign-in\u2026 allow the pop-up if asked.");
+    Promise.resolve(puter.auth.signIn()).then(function(){
+      signedInCache = true;
+      setMode("cloud");
+      return syncOnLogin();
+    }).then(function(res){
+      setBtnSyncing(false);
+      if(res && res.doReload){ location.reload(); return; }
+      reflectButton(); buildPanel();
+    }).catch(function(){
+      setBtnSyncing(false);            // popup blocked / dismissed
+      buildPanel();
+      flash("Sign-in was cancelled. Allow pop-ups for this page, then try again.");
+    });
+  }
+
+  function doSignOut(){
+    setMode("local");
+    try{ if(hasPuter() && puter.auth.signOut) puter.auth.signOut(); }catch(e){}
+    signedInCache = false;
+    reflectButton();
+    closePanel();
+  }
+
+  function flash(msg){
+    var s = body.querySelector(".cloudStatus");
+    if(!s){ body.insertAdjacentHTML("afterbegin", '<div class="cloudStatus">' + msg + '</div>'); return; }
+    var old = s.innerHTML; s.innerHTML = msg;
+    setTimeout(function(){ if(s && document.body.contains(s)) s.innerHTML = old; }, 1600);
+  }
+
+  /* ---- wrap the page's global save() so edits also push to the cloud ---- */
+  (function hookSave(){
+    var orig = window.save;
+    window.save = function(){
+      var r = (typeof orig === "function") ? orig.apply(this, arguments) : undefined;
+      touchStamp();
+      schedulePush();
+      return r;
+    };
+  })();
+
+  /* ---- the sync button and the weather widget now share the #cornerStack
+     flex column, so CSS handles the spacing and they can never overlap.
+     keep a no-op here so the existing boot calls below stay safe. ---- */
+  function positionCloudBtn(){}
+
+  /* ---- events ---- */
+  btn.addEventListener("click", openPanel);
+  closeBtn.addEventListener("click", closePanel);
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) closePanel(); });
+  document.addEventListener("keydown", function(e){
+    if(overlay.classList.contains("open") && e.key === "Escape"){ e.stopImmediatePropagation(); closePanel(); }
+  }, true);
+
+  /* safety net: also flush latest data when leaving / hiding the page */
+  function flushOnLeave(){ if(getMode() === "cloud" && signedInCache){ try{ pushNow(); }catch(e){} } }
+  window.addEventListener("pagehide", flushOnLeave);
+  document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "hidden") flushOnLeave(); });
+
+  /* ---- boot ---- */
+  reflectButton();
+  positionCloudBtn();
+  setTimeout(positionCloudBtn, 400);   // re-check after fonts / weather box settle
+  if(getMode() === "cloud"){
+    /* returning cloud user: silent background sync (newest-wins) */
+    isSignedIn().then(function(s){
+      if(!s) return;                 // will re-auth when they open the panel or on next sign-in
+      cloudGet().then(function(cloud){
+        if(!cloud || !cloud.data){ schedulePush(); return; }
+        if(Number(cloud.savedAt || 0) > localStamp()){ writeBundleToLocal(cloud); location.reload(); }
+        else { schedulePush(); }
+      });
+    });
+  }
 })();
 </script>
 
