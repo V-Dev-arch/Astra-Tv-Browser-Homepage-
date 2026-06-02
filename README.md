@@ -16,7 +16,7 @@ Futuristic Browser Homepage Experience For Smart TVs
 
 📺 About Astra
 
-ASTRA is a futuristic browser homepage interface specially designed for Smart TVs, Android TV systems, Fire TV devices and remote-based navigation environments.
+ASTRA is a futuristic AI powered browser homepage interface specially designed for Smart TVs, Android TV systems, Fire TV devices and remote-based navigation environments.
 
 Unlike traditional browser homepages, Astra focuses on:
 
@@ -38,7 +38,7 @@ Astra transforms ordinary TV browsers into a modern dashboard-style interface.
  - Full Keyboard Support
  - Full Virtual and Physical Mouse Support
  - Full Game Controller Support
- - Full Touchscreen Support 
+ - Full Touchscreen Support
 
 
 Astra includes a fully custom TV navigation engine designed for D-pad movement systems.
@@ -71,7 +71,35 @@ UI Includes
 - Large interactive cards
 - Modern dark theme
 
+--- 
+
+## Astra AI
+
+Astra AI is the smart assistant built into Astra TV Browser Homepage. It can understand natural language commands and quickly help you navigate the web. Simply type commands like "open YouTube", "open Google", or "open Netflix", and Astra AI will automatically take you to the requested website.
+
+Features:
+
+🤖 Smart AI-powered command recognition
+🎤 Voice search support
+🌐 Direct website opening with simple commands
+⚡ Fast and easy TV-friendly navigation
+📺 Designed for Smart TVs, streaming devices, and browsers
+
+Important Notice:
+⚠️ To use Astra AI, you must sign in or create an account when prompted. Do not ignore or close the Sign In / Sign Up window, as Astra AI features may not work correctly without authentication.
+
+Examples:
+
+open youtube
+open google
+open netflix
+open github
+open facebook
+
+Astra AI will automatically recognize supported commands and take you directly to the requested destination. 🚀🌌
+
 ---
+
 
 ⚡ Lightweight Performance
 
