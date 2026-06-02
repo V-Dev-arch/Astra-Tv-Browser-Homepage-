@@ -145,6 +145,16 @@ Note: All future updates will be shown in this table only.
     <td>29 May 2026</td>
     <td>Added Custom Background Support Using Image URLs</td>
   </tr>
+
+  <tr>
+    <td>2 June 2026</td>
+    <td>Major Update: Added AI</td>
+  </tr>
+
+  <tr>
+    <td>2 June 2026</td>
+    <td>Added Last Visited</td>
+  </tr>
   
 </table>
 
