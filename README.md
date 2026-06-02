@@ -147,11 +147,16 @@ Note: All future updates will be shown in this table only.
   </tr>
 
   <tr>
-    <td>2 June 2026</td>
-    <td>Major Update: Added AI</td>
+    <td>31 May 2026</td>
+    <td>Added Menu button, middle line is a hidden menu button</td>
   </tr>
 
   <tr>
+    <td>2 June 2026</td>
+    <td>Major Update: Added Astra AI</td>
+  </tr>
+
+   <tr>
     <td>2 June 2026</td>
     <td>Added Last Visited</td>
   </tr>
