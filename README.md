@@ -178,7 +178,17 @@ Note: All future updates will be shown in this table only.
 
    <tr>
     <td>2 June 2026</td>
-    <td>Added Last Visited</td>
+    <td>Added Most Visited</td>
+  </tr>
+
+   <tr>
+    <td>2 June 2026</td>
+    <td>Added a 'x' button at most visited so that you can delete it</td>
+  </tr>
+
+  <tr>
+    <td>2 June 2026</td>
+    <td>Fixed remote navigation</td>
   </tr>
   
 </table>
