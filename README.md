@@ -193,6 +193,11 @@ Note: All future updates will be shown in this table only.
     <td>2 June 2026</td>
     <td>Fixed remote navigation</td>
   </tr>
+
+  <tr>
+    <td>3 June 2026</td>
+    <td>Major Update: Added cloud storage option</td>
+  </tr>
   
 </table>
 
