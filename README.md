@@ -88,14 +88,6 @@ Features:
 Important Notice:
 ⚠️ To use Astra AI, you must sign in or create an account when prompted. Do not ignore or close the Sign In / Sign Up window, as Astra AI features may not work correctly without authentication.
 
-Examples:
-
-open youtube
-open google
-open netflix
-open github
-open facebook
-
 Astra AI will automatically recognize supported commands and take you directly to the requested destination. 🚀🌌
 
 ---
