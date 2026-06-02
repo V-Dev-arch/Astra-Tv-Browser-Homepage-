@@ -412,7 +412,7 @@ UI:
 
 WITHOUT CUSTOM BACKGROUND 
 
-<div align="center"><img src="https://files.catbox.moe/v9xpaj.png" width="950"></div>---
+<div align="center"><img src="https://files.catbox.moe/p0hhob.png" width="950"></div>---
 
 WITH CUSTOM BACKGROUND 
 
