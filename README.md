@@ -39,6 +39,7 @@ Astra transforms ordinary TV browsers into a modern dashboard-style interface.
  - Full Virtual and Physical Mouse Support
  - Full Game Controller Support
  - Full Touchscreen Support
+(Virtual Mouse Recommended)
 
 
 Astra includes a fully custom TV navigation engine designed for D-pad movement systems.
