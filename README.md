@@ -73,7 +73,7 @@ UI Includes
 
 --- 
 
-## Astra AI
+# Astra AI
 
 Astra AI is the smart assistant built into Astra TV Browser Homepage. It can understand natural language commands and quickly help you navigate the web. Simply type commands like "open YouTube", "open Google", or "open Netflix", and Astra AI will automatically take you to the requested website.
 
