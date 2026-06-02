@@ -419,33 +419,8 @@ WITH CUSTOM BACKGROUND
 <div align="center"><img src="https://files.catbox.moe/1etxn9.png" width="950"></div>---
 
 
-
 ---
 
-🔮 Future Updates
-
-🚀 Planned Features
-
----
-
-
-🎨 Theme Engine
-
-Custom themes and color systems.
-
----
-
-🤖 Smart Recommendations
-
-AI-powered shortcuts and suggestions.
-
----
-
-🧩 Modular Widgets
-
-Custom homepage modules and sections.
-
----
 
 
 ## Custom Background Image Support
