@@ -700,7 +700,7 @@ button{
     <button onclick="search()">Search</button>
   </div>
 
-  <button id="voiceBtn"></button>
+  <button id="voiceBtn" tabindex="0" aria-label="Voice search" title="Voice search — tap, press OK on your remote, hit your remote's mic, or press V"></button>
 
   <div class="searchBox">
     <input id="urlBar" placeholder="Enter URL">
@@ -759,50 +759,93 @@ voiceBtn.innerHTML = `
   </div>
 `;
 
-voiceBtn.onclick=function(){
+/* One reusable voice-search routine, so the on-screen button, the remote's
+   OK/Enter, AND a hardware mic/voice key can all trigger the exact same thing. */
+let voiceListening=false;
+
+function startVoiceSearch(){
+  if(voiceListening) return;                 // already listening -> ignore repeat presses
 
   const SpeechRecognition=
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
 
   if(!SpeechRecognition){
-
-    alert("Voice search not supported");
-
+    /* No in-browser speech engine. On most Android TVs the remote's mic button
+       is owned by the system and opens Google Assistant instead, which can still
+       search for you -- so this message just covers the rare fallback case. */
+    alert("Voice search isn't supported in this browser. Use your remote's microphone / Google Assistant button instead.");
     return;
   }
 
   const recognition=new SpeechRecognition();
-
   recognition.lang="en-US";
+  recognition.interimResults=false;
+  recognition.maxAlternatives=1;
 
-  recognition.start();
+  try{ recognition.start(); }
+  catch(e){ return; }                        // start() throws if fired twice in a row
 
+  voiceListening=true;
   voiceBtn.classList.add("listening");
 
   recognition.onresult=function(event){
-
     let text=event.results[0][0].transcript;
-
     searchBar.value=text;
-
     window.location.href=
       "https://google.com/search?q="+
       encodeURIComponent(text);
   };
 
   recognition.onend=function(){
-
-    voiceBtn.classList.remove("listening");
+    voiceListening=false;
+    voiceBtn.classList.remove("listening");  // keep the mic icon intact, just stop the glow
   };
 
   recognition.onerror=function(){
-
-    voiceBtn.innerText="🎤";
-
-    alert("Voice search failed");
+    voiceListening=false;
+    voiceBtn.classList.remove("listening");
   };
-};
+}
+
+/* clicking / tapping the on-screen mic, or pressing OK on it via remote nav */
+voiceBtn.onclick=startVoiceSearch;
+
+/* ---- HARDWARE VOICE / MIC / SEARCH / ASSISTANT BUTTON ON THE REMOTE ----
+   Important: on Android TV / Google TV the dedicated mic button is usually
+   handled by the operating system, so pressing it opens Google Assistant and
+   the web page never receives the key -- that is expected and works for
+   searching. BUT when a remote or TV browser DOES forward a Search / Voice key
+   to the page, we catch it here and start the same on-page voice search. As a
+   guaranteed fallback on any keyboard or mapped remote, pressing "V" works too
+   (never while you're typing in a box). */
+(function(){
+  const VOICE_KEYS=[
+    "Search","BrowserSearch","VoiceDial","GoogleAssistant",
+    "MicrophoneToggle","LaunchAssistant","BrowserHome"
+  ];
+  function isVoiceKey(e){
+    if(VOICE_KEYS.indexOf(e.key)>-1) return true;
+    if(e.keyCode===231) return true;          // some Android WebViews emit this for "voice assist"
+    /* manual "V" shortcut, but only when not typing in an input */
+    const ae=document.activeElement;
+    const typing=ae && (ae.tagName==="INPUT" || ae.tagName==="TEXTAREA" || ae.isContentEditable);
+    if(!typing && (e.key==="v" || e.key==="V")) return true;
+    return false;
+  }
+  document.addEventListener("keydown",function(e){
+    if(!isVoiceKey(e)) return;
+    e.preventDefault();
+    /* If the Astra AI panel is open, send the voice to the AI's own mic
+       instead of leaving the page for a Google search. */
+    const overlay=document.getElementById("aiOverlay");
+    if(overlay && overlay.classList.contains("open")){
+      const aiMic=document.getElementById("aiMic");
+      if(aiMic){ aiMic.click(); return; }
+    }
+    startVoiceSearch();
+  }, true);   // capture phase: best chance to beat the browser's own Search default
+})();
 /* SEARCH */
 function search(){
   let q=searchBar.value;
