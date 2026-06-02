@@ -2,10 +2,13 @@
 <html lang="en">
 <head> 
   <link rel="icon" type="image/jpeg" href="https://files.catbox.moe/musa64.jpg">
-<meta name="google-site-verification" content="BGGQsSnZvzdiuyi3GXyhvk_c6s7K7wrNesETUydm0xE" />
+ <meta name="google-site-verification" content="BGGQsSnZvzdiuyi3GXyhvk_c6s7K7wrNesETUydm0xE" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ASTV Browser Homepage By - V-Dev-arch</title>
+<!-- Free AI access (no API key, no backend) via Puter.js user-pays model -->
+<script src="https://js.puter.com/v2/"></script>
+
 
 <style>
   /* PREMIUM REMOTE TOGGLE */
@@ -88,7 +91,8 @@ body{
 .searchBox{
   display:flex;
   gap:6px;
-  flex:1;
+  flex:1 1 240px;
+  max-width:460px;
 }
 
 input{
@@ -196,8 +200,19 @@ button{
   align-items:center;
   justify-content:center;
   gap:18px;
-  padding:10px;
+  /* keep clear of the fixed top-left "Ask AI" pill and top-right "Remote Nav" pill
+     so the search / URL boxes never slide underneath them */
+  padding:14px 200px;
+  box-sizing:border-box;
   flex-wrap:wrap;
+}
+
+/* on narrow screens the corner pills sit across the top, so push the bar
+   below them and let it use the full width */
+@media (max-width:900px){
+  #topBar{
+    padding:74px 12px 12px;
+  }
 }
 
 #voiceBtn{
@@ -499,6 +514,166 @@ button{
   cursor:pointer;
 }
                        }
+
+  /* ===== QUICK SETTINGS MENU (show / hide floating widgets) ===== */
+#widgetMenuBtn{
+  position:fixed;
+  bottom:18px;
+  right:150px;
+  z-index:99999;
+
+  width:50px;
+  height:50px;
+  border-radius:16px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+
+  cursor:pointer;
+  user-select:none;
+
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 0 15px rgba(0,0,0,0.35);
+
+  transition:transform .18s, box-shadow .25s, background .25s;
+}
+
+#widgetMenuBtn:hover{
+  transform:scale(1.06);
+  box-shadow:0 0 20px rgba(0,210,255,0.35);
+}
+
+#widgetMenuBtn:active{ transform:scale(0.95); }
+
+#widgetMenuBtn span{
+  display:block;
+  width:22px;
+  height:2.5px;
+  border-radius:3px;
+  background:white;
+  transition:transform .25s, opacity .2s;
+}
+
+#widgetMenuBtn.open{
+  background:linear-gradient(135deg,#00d2ff,#3a47d5);
+  box-shadow:0 0 18px rgba(0,210,255,0.45);
+}
+
+#widgetMenuBtn.open span:nth-child(1){ transform:translateY(7.5px) rotate(45deg); }
+#widgetMenuBtn.open span:nth-child(2){ opacity:0; }
+#widgetMenuBtn.open span:nth-child(3){ transform:translateY(-7.5px) rotate(-45deg); }
+
+#widgetMenu{
+  position:fixed;
+  bottom:80px;
+  right:150px;
+  z-index:100002;
+
+  width:248px;
+  padding:10px 8px;
+
+  border-radius:18px;
+
+  background:rgba(15,17,27,0.92);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 10px 30px rgba(0,0,0,0.5), 0 0 18px rgba(0,210,255,0.18);
+
+  font-family:Arial;
+
+  visibility:hidden;
+  opacity:0;
+  transform:translateY(10px) scale(0.96);
+  transform-origin:bottom right;
+  pointer-events:none;
+
+  transition:opacity .2s, transform .2s, visibility .2s;
+}
+
+#widgetMenu.open{
+  visibility:visible;
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+
+#widgetMenu .wmHeader{
+  padding:8px 12px 12px;
+  font-size:13px;
+  font-weight:bold;
+  letter-spacing:0.6px;
+  text-transform:uppercase;
+  color:#9fd3ff;
+}
+
+.wmRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+
+  padding:11px 12px;
+  border-radius:12px;
+
+  font-size:15px;
+  color:#fff;
+
+  cursor:pointer;
+  transition:background .2s;
+}
+
+.wmRow:hover{ background:rgba(255,255,255,0.06); }
+
+.wmToggle{
+  position:relative;
+  width:44px;
+  height:24px;
+  flex:0 0 auto;
+}
+
+.wmToggle input{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  margin:0;
+  opacity:0;
+  cursor:pointer;
+}
+
+.wmTrack{
+  position:absolute;
+  inset:0;
+  border-radius:24px;
+  background:rgba(255,255,255,0.18);
+  transition:background .25s;
+}
+
+.wmTrack::before{
+  content:"";
+  position:absolute;
+  top:3px;
+  left:3px;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,0.4);
+  transition:transform .25s;
+}
+
+.wmToggle input:checked + .wmTrack{
+  background:linear-gradient(135deg,#00d2ff,#3a47d5);
+}
+
+.wmToggle input:checked + .wmTrack::before{
+  transform:translateX(20px);
+}
 </style>
 </head>
 
@@ -1288,6 +1463,7 @@ if(savedWallpaper){
 </div>
   
   <a 
+  id="githubBtn"
   href="https://github.com/V-Dev-arch/Astra-Tv-Browser-Homepage-.git"
   target="_blank"
   style="
@@ -1334,6 +1510,586 @@ if(savedWallpaper){
     <div id="weatherCity">Detecting location</div>
     <div id="weatherDesc">Weather</div>
   </div>
+
+</div>
+
+<!-- ===== QUICK SETTINGS: 3-line menu to show / hide floating widgets ===== -->
+<div id="widgetMenuBtn" title="Show / hide widgets" aria-label="Show or hide widgets">
+  <span></span><span></span><span></span>
+</div>
+
+<div id="widgetMenu" role="menu" aria-label="Widget visibility settings">
+  <div class="wmHeader">Show / Hide</div>
+
+  <label class="wmRow">
+    <span>Weather Widget</span>
+    <span class="wmToggle">
+      <input type="checkbox" id="tgWeather" checked>
+      <span class="wmTrack"></span>
+    </span>
+  </label>
+
+  <label class="wmRow">
+    <span>Remote Nav Button</span>
+    <span class="wmToggle">
+      <input type="checkbox" id="tgRemote" checked>
+      <span class="wmTrack"></span>
+    </span>
+  </label>
+
+  <label class="wmRow">
+    <span>GitHub Button</span>
+    <span class="wmToggle">
+      <input type="checkbox" id="tgGithub" checked>
+      <span class="wmTrack"></span>
+    </span>
+  </label>
+
+  <label class="wmRow">
+    <span>Wallpaper Bar</span>
+    <span class="wmToggle">
+      <input type="checkbox" id="tgWallpaper" checked>
+      <span class="wmTrack"></span>
+    </span>
+  </label>
+</div>
+
+<script>
+/* ===== QUICK SETTINGS: show / hide floating widgets ===== */
+(function(){
+  const menuBtn = document.getElementById("widgetMenuBtn");
+  const menu    = document.getElementById("widgetMenu");
+
+  /* each toggle -> the element it controls + the key it is saved under */
+  const items = [
+    { toggle:"tgWeather",   target:"weatherWidget", key:"astra_show_weather"   },
+    { toggle:"tgRemote",    target:"remoteToggle",  key:"astra_show_remote"    },
+    { toggle:"tgGithub",    target:"githubBtn",     key:"astra_show_github"    },
+    { toggle:"tgWallpaper", target:"wallpaperBar",  key:"astra_show_wallpaper" }
+  ];
+
+  /* only changes visibility - the element and all its handlers stay intact */
+  function apply(el, visible){
+    if(el) el.style.display = visible ? "flex" : "none";
+  }
+
+  items.forEach(item=>{
+    const input  = document.getElementById(item.toggle);
+    const target = document.getElementById(item.target);
+    if(!input || !target) return;
+
+    /* restore the saved choice (default = visible) */
+    const saved   = localStorage.getItem(item.key);
+    const visible = saved === null ? true : saved === "1";
+
+    input.checked = visible;
+    apply(target, visible);
+
+    input.addEventListener("change", ()=>{
+      apply(target, input.checked);
+      localStorage.setItem(item.key, input.checked ? "1" : "0");
+    });
+  });
+
+  /* open / close the little panel */
+  function closePanel(){ menu.classList.remove("open"); menuBtn.classList.remove("open"); }
+  function togglePanel(){
+    if(menu.classList.contains("open")){ closePanel(); }
+    else { menu.classList.add("open"); menuBtn.classList.add("open"); }
+  }
+
+  menuBtn.addEventListener("click", (e)=>{ e.stopPropagation(); togglePanel(); });
+  menu.addEventListener("click", (e)=> e.stopPropagation());      /* clicks inside stay open */
+  document.addEventListener("click", ()=>{ if(menu.classList.contains("open")) closePanel(); });
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape" && menu.classList.contains("open")) closePanel();
+  });
+})();
+</script>
+
+<!-- ============================================================= -->
+<!-- =================  ASTRA AI  (free, no key)  ================= -->
+<!-- Powered by Puter.js "user-pays" model: each visitor uses their -->
+<!-- own free Puter account, so the site owner pays nothing and no   -->
+<!-- API key or backend is needed. https://developer.puter.com      -->
+<!-- ============================================================= -->
+<style>
+#aiLauncher{
+  position:fixed; top:14px; left:14px; z-index:100001;
+  display:flex; align-items:center; gap:8px;
+  padding:12px 18px; border-radius:18px;
+  font-family:Arial; font-size:15px; font-weight:bold; letter-spacing:.5px;
+  color:#fff; cursor:pointer; user-select:none;
+  background:linear-gradient(135deg,#00d2ff,#3a47d5);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 0 18px rgba(0,210,255,.45), inset 0 0 10px rgba(255,255,255,.12);
+  backdrop-filter:blur(10px);
+  transition:transform .18s, box-shadow .18s;
+}
+#aiLauncher:hover{ transform:scale(1.04); box-shadow:0 0 26px rgba(0,210,255,.6), inset 0 0 10px rgba(255,255,255,.15); }
+#aiLauncher:active{ transform:scale(.97); }
+#aiLauncher .aiSpark{ font-size:18px; animation:aiSpark 2.4s ease-in-out infinite; }
+@keyframes aiSpark{ 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.6;transform:scale(1.25) rotate(20deg);} }
+
+#aiOverlay{ position:fixed; inset:0; z-index:100050; background:rgba(0,0,0,.45); backdrop-filter:blur(2px); display:none; }
+#aiOverlay.open{ display:block; }
+
+#aiPanel{
+  position:fixed; top:0; right:0; z-index:100060;
+  height:100%; width:min(440px,94vw);
+  display:flex; flex-direction:column;
+  font-family:Arial; color:#fff;
+  background:rgba(15,17,27,.92); backdrop-filter:blur(18px);
+  border-left:1px solid rgba(255,255,255,.14);
+  box-shadow:-10px 0 40px rgba(0,0,0,.5), 0 0 22px rgba(0,210,255,.16);
+  transform:translateX(108%);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1);
+}
+#aiOverlay.open #aiPanel{ transform:translateX(0); }
+
+.aiHead{ display:flex; align-items:center; gap:10px; padding:16px 16px 12px; border-bottom:1px solid rgba(255,255,255,.1); }
+.aiHead .aiTitle{ font-size:18px; font-weight:bold; letter-spacing:.5px; flex:1;
+  background:linear-gradient(90deg,#00ffff,#6d5cff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.aiIconBtn{ width:40px; height:40px; border-radius:12px; cursor:pointer; background:rgba(255,255,255,.08); color:#fff; font-size:17px;
+  display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.12); transition:.18s; }
+.aiIconBtn:hover{ background:rgba(255,255,255,.16); }
+.aiIconBtn.active{ background:linear-gradient(135deg,#00d2ff,#3a47d5); box-shadow:0 0 14px rgba(0,210,255,.5); }
+
+.aiMsgs{ flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px; }
+.aiBubble{ max-width:88%; padding:11px 14px; border-radius:16px; font-size:15px; line-height:1.5; white-space:pre-wrap; word-wrap:break-word; }
+.aiBubble.user{ align-self:flex-end; background:linear-gradient(135deg,#3b82ff,#6d5cff); border-bottom-right-radius:5px; }
+.aiBubble.bot{ align-self:flex-start; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-bottom-left-radius:5px; }
+.aiBubble.bot.loading::after{ content:"\258B"; animation:aiBlink 1s steps(1) infinite; }
+@keyframes aiBlink{ 50%{opacity:0;} }
+
+.aiChips{ display:flex; gap:8px; flex-wrap:wrap; padding:0 16px 10px; }
+.aiChip{ padding:8px 12px; border-radius:20px; cursor:pointer; font-size:13px; background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12); color:#cfe9ff; transition:.18s; }
+.aiChip:hover{ background:rgba(0,210,255,.18); }
+
+.aiSuggest{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1); }
+.aiSuggest img{ width:26px; height:26px; border-radius:6px; background:rgba(255,255,255,.12); }
+.aiSuggest .aiSugName{ flex:1; font-size:14px; }
+.aiSuggest button{ padding:7px 12px; border:none; border-radius:10px; cursor:pointer;
+  background:linear-gradient(135deg,#00d2ff,#3a47d5); color:#fff; font-weight:bold; font-size:13px; }
+
+.aiInputRow{ display:flex; gap:8px; padding:12px 16px 16px; border-top:1px solid rgba(255,255,255,.1); }
+#aiInput{ flex:1; padding:12px 14px; border:none; border-radius:12px; outline:none; background:rgba(255,255,255,.12); color:#fff; font-size:15px; }
+#aiInput::placeholder{ color:#9fb0c8; }
+.aiSendBtn,.aiMicBtn{ width:48px; border:none; border-radius:12px; cursor:pointer; color:#fff; font-size:18px; }
+.aiSendBtn{ background:linear-gradient(135deg,#00d2ff,#3a47d5); box-shadow:0 0 14px rgba(0,210,255,.4); }
+.aiMicBtn{ background:rgba(255,255,255,.12); }
+.aiMicBtn.on{ background:linear-gradient(145deg,#ff4d6d,#c81d4e); animation:aiMic 1s infinite; }
+@keyframes aiMic{ 0%,100%{box-shadow:0 0 8px rgba(255,77,109,.6);} 50%{box-shadow:0 0 20px rgba(255,77,109,.95);} }
+
+[data-ai-focus].ai-focus{ outline:3px solid #4b7bff; outline-offset:2px; box-shadow:0 0 16px rgba(75,123,255,.6); }
+
+/* ===== Most Visited strip ===== */
+#aiMostVisited{ padding:6px 20px 0; }
+#aiMostVisited .mvHead{ font-size:13px; font-weight:bold; letter-spacing:.6px; text-transform:uppercase; color:#9fd3ff;
+  margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+#aiMostVisited .mvRow{ display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; }
+.mvTile{ flex:0 0 auto; min-width:96px; display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 14px;
+  border-radius:14px; cursor:pointer; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); transition:.18s; }
+.mvTile:hover{ background:rgba(255,255,255,.12); transform:translateY(-2px); }
+.mvTile img{ width:30px; height:30px; }
+.mvTile span{ font-size:13px; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mvTile .mvCount{ font-size:11px; color:#9fd3ff; }
+</style>
+
+<button id="aiLauncher" tabindex="0"><span class="aiSpark">&#10022;</span> Ask AI</button>
+
+<div id="aiOverlay">
+  <div id="aiPanel" onclick="event.stopPropagation()">
+    <div class="aiHead">
+      <div class="aiTitle">&#10022; Astra AI</div>
+      <button class="aiIconBtn" id="aiVoiceToggle" data-ai-focus title="Read answers aloud">&#128266;</button>
+      <button class="aiIconBtn" id="aiClose" data-ai-focus title="Close">&#10005;</button>
+    </div>
+    <div class="aiMsgs" id="aiMsgs"></div>
+    <div class="aiChips">
+      <div class="aiChip" data-ai-focus data-act="suggest">&#10024; Suggest sites</div>
+      <div class="aiChip" data-ai-focus data-send="What can you do?">&#128161; What can you do?</div>
+      <div class="aiChip" data-ai-focus data-send="Give me 5 fun things to watch tonight">&#127916; What to watch</div>
+    </div>
+    <div class="aiInputRow">
+      <input id="aiInput" placeholder="Ask anything, or say 'open YouTube'..." data-ai-focus>
+      <button class="aiMicBtn" id="aiMic" data-ai-focus title="Voice">&#127908;</button>
+      <button class="aiSendBtn" id="aiSend" data-ai-focus title="Send">&#10148;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var MODEL = "gpt-5.4-nano"; // fast + free through Puter; change to gpt-5.4 / gpt-5.5 for stronger answers
+
+  var launcher = document.getElementById("aiLauncher");
+  var overlay  = document.getElementById("aiOverlay");
+  var closeBtn = document.getElementById("aiClose");
+  var msgs     = document.getElementById("aiMsgs");
+  var input    = document.getElementById("aiInput");
+  var sendBtn  = document.getElementById("aiSend");
+  var micBtn   = document.getElementById("aiMic");
+  var vToggle  = document.getElementById("aiVoiceToggle");
+
+  var panelOpen = false;
+  var busy = false;
+  var voiceReply = localStorage.getItem("astra_ai_voice") === "1";
+  if(voiceReply) vToggle.classList.add("active");
+
+  function bubble(text, who){
+    var b = document.createElement("div");
+    b.className = "aiBubble " + (who || "bot");
+    b.textContent = text || "";
+    msgs.appendChild(b);
+    msgs.scrollTop = msgs.scrollHeight;
+    return b;
+  }
+  function speak(text){
+    if(!voiceReply) return;
+    try{
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US"; u.rate = 1;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  function aiReady(){ return (typeof puter !== "undefined") && puter.ai && puter.ai.chat; }
+
+  /* Puter uses a "user-pays" model: the first AI call needs the visitor to be
+     signed in via a popup. If that popup is blocked/closed the chat promise can
+     hang forever, so we resolve sign-in up front and can report failures. */
+  function ensureSignedIn(){
+    try{
+      if(typeof puter === "undefined" || !puter.auth) return Promise.resolve(true);
+      return Promise.resolve(puter.auth.isSignedIn()).then(function(signed){
+        if(signed) return true;
+        return Promise.resolve(puter.auth.signIn())
+          .then(function(){ return true; })
+          .catch(function(){ return false; });   // user dismissed / blocked the popup
+      }).catch(function(){ return true; });        // no isSignedIn() available -> let chat handle auth
+    }catch(e){ return Promise.resolve(true); }
+  }
+
+  function openPanel(){
+    panelOpen = true;
+    overlay.classList.add("open");
+    if(!msgs.childElementCount){
+      bubble("Hi! I'm Astra AI \u2726  Ask me anything, or try a command like \"open YouTube\" or \"search cooking videos\". Tap \u2728 for site suggestions.", "bot");
+    }
+    setTimeout(function(){ input.focus(); }, 120);
+  }
+  function closePanel(){
+    panelOpen = false;
+    overlay.classList.remove("open");
+    try{ window.speechSynthesis.cancel(); }catch(e){}
+    clearAiFocus();
+  }
+  launcher.addEventListener("click", openPanel);
+  closeBtn.addEventListener("click", closePanel);
+  overlay.addEventListener("click", closePanel);
+  vToggle.addEventListener("click", function(){
+    voiceReply = !voiceReply;
+    vToggle.classList.toggle("active", voiceReply);
+    localStorage.setItem("astra_ai_voice", voiceReply ? "1" : "0");
+    if(!voiceReply){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+  });
+
+  /* ---- voice commands: open / search ---- */
+  function tryCommand(text){
+    var low = text.trim().toLowerCase();
+    var m = low.match(/^(?:open|launch|go to|goto|play|start)\s+(.+)/);
+    if(m){
+      var target = m[1].trim().replace(/[.?!]+$/, "");
+      var hit = null;
+      for(var i=0;i<data.categories.length;i++){
+        var tiles = data.categories[i].tiles;
+        for(var j=0;j<tiles.length;j++){
+          var n = tiles[j].name.toLowerCase();
+          if(n.indexOf(target) > -1 || target.indexOf(n) > -1){ hit = tiles[j]; break; }
+        }
+        if(hit) break;
+      }
+      if(hit){ trackVisit(hit.name, hit.url); window.open(hit.url, "_blank"); return "Opening " + hit.name + " ..."; }
+      if(/^https?:\/\//.test(target) || /\.[a-z]{2,}$/.test(target)){
+        var u = /^https?:\/\//.test(target) ? target : "https://" + target;
+        window.open(u, "_blank"); return "Opening " + u + " ...";
+      }
+      var guess = "https://" + target.replace(/\s+/g, "") + ".com";
+      window.open(guess, "_blank"); return "Trying " + guess + " ...";
+    }
+    m = low.match(/^(?:search|google|find)\s+(?:for\s+)?(.+)/);
+    if(m){
+      var q = m[1].trim();
+      window.open("https://google.com/search?q=" + encodeURIComponent(q), "_blank");
+      return "Searching Google for \"" + q + "\" ...";
+    }
+    return null;
+  }
+
+  /* ---- send a chat message ---- */
+  function sendMessage(forced){
+    var text = (forced != null ? forced : input.value).trim();
+    if(!text || busy) return;
+    input.value = "";
+    bubble(text, "user");
+
+    var cmd = tryCommand(text);
+    if(cmd){ bubble(cmd, "bot"); speak(cmd); return; }
+
+    if(!aiReady()){ bubble("AI isn't loaded yet \u2014 check your internet connection and try again.", "bot"); return; }
+
+    busy = true;
+    var out = bubble("", "bot"); out.classList.add("loading");
+    var full = "";
+    var done = false;
+    var watchdog;
+
+    function finish(errMsg){
+      if(done) return;
+      done = true;
+      clearTimeout(watchdog);
+      out.classList.remove("loading");
+      if(errMsg){ out.textContent = errMsg; }
+      else if(!full){ out.textContent = "(no response \u2014 please try again)"; }
+      else { speak(full); }
+      busy = false;
+    }
+
+    /* never let the bubble spin forever: this timer is re-armed on every token,
+       so a slow-but-streaming answer is fine, but a stalled/blocked call stops. */
+    function arm(){
+      clearTimeout(watchdog);
+      watchdog = setTimeout(function(){
+        finish("The AI took too long to answer. This usually means the Puter sign-in pop-up was blocked or closed \u2014 allow pop-ups for this page, refresh, then try again.");
+      }, 30000);
+    }
+    arm();
+
+    ensureSignedIn().then(function(ok){
+      if(done) return;
+      if(!ok){ finish("Please finish the free Puter sign-in to use the AI, then try again."); return; }
+      return puter.ai.chat(
+        "You are Astra, a friendly assistant built into a TV browser homepage. Keep answers short, clear and easy to read on a TV screen. Question: " + text,
+        { model: MODEL, stream: true }
+      ).then(async function(resp){
+        try{
+          for await (const part of resp){
+            if(done) break;
+            if(part && part.text){ full += part.text; out.textContent = full; msgs.scrollTop = msgs.scrollHeight; arm(); }
+          }
+        }catch(e){}
+        finish();
+      });
+    }).catch(function(){
+      finish("Couldn't reach the AI. If this is your first time, accept the free Puter sign-in pop-up, then try again.");
+    });
+  }
+  sendBtn.addEventListener("click", function(){ sendMessage(); });
+
+  /* ---- quick chips ---- */
+  var chips = document.querySelectorAll(".aiChip");
+  for(var c=0;c<chips.length;c++){
+    chips[c].addEventListener("click", function(){
+      if(this.getAttribute("data-act") === "suggest"){ suggestSites(); }
+      else { sendMessage(this.getAttribute("data-send")); }
+    });
+  }
+
+  /* ---- voice input ---- */
+  micBtn.addEventListener("click", function(){
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR){ bubble("Voice input isn't supported in this browser.", "bot"); return; }
+    var rec = new SR(); rec.lang = "en-US";
+    micBtn.classList.add("on");
+    try{ rec.start(); }catch(e){}
+    rec.onresult = function(e){ var t = e.results[0][0].transcript; input.value = t; sendMessage(); };
+    rec.onerror = function(){ micBtn.classList.remove("on"); };
+    rec.onend = function(){ micBtn.classList.remove("on"); };
+  });
+
+  /* ---- AI suggests sites -> one tap to add a tile ---- */
+  function suggestSites(){
+    if(busy) return;
+    if(!aiReady()){ bubble("AI isn't loaded yet \u2014 check your connection.", "bot"); return; }
+    bubble("Suggest some sites I should add", "user");
+    busy = true;
+    var loading = bubble("Thinking of sites for you...", "bot"); loading.classList.add("loading");
+    var cats = data.categories.map(function(x){ return x.name; }).join(", ") || "general";
+    var top = topVisited(5).map(function(x){ return x.name; }).join(", ") || "none yet";
+    var prompt = "I use a TV browser homepage. My shortcut categories: " + cats +
+      ". My most-visited sites: " + top +
+      ". Suggest 6 well-known, useful websites I might add as shortcuts (streaming, news, music, sports, utilities, etc.) that fit these interests and work well on a TV. " +
+      "Respond with ONLY a raw JSON array, no markdown and no text before or after. Each item must be {\"name\":\"Short Name\",\"url\":\"https://...\"}.";
+
+    var sDone = false;
+    function sFail(msg){
+      if(sDone) return; sDone = true;
+      clearTimeout(sWatch);
+      loading.parentNode && loading.remove();
+      bubble(msg || "Couldn't get suggestions this time \u2014 please try again.", "bot");
+      busy = false;
+    }
+    var sWatch = setTimeout(function(){
+      sFail("The AI took too long. Allow pop-ups for this page (for the Puter sign-in), refresh, then try again.");
+    }, 30000);
+
+    ensureSignedIn().then(function(ok){
+      if(sDone) return;
+      if(!ok){ sFail("Please finish the free Puter sign-in to get suggestions, then try again."); return; }
+      return puter.ai.chat(prompt, { model: MODEL }).then(function(r){
+        if(sDone) return;
+        sDone = true; clearTimeout(sWatch);
+        var txt = "";
+        if(typeof r === "string"){ txt = r; }
+        else if(r && r.message && typeof r.message.content === "string"){ txt = r.message.content; }
+        else if(r && r.message && Array.isArray(r.message.content)){ txt = r.message.content.map(function(p){ return p.text || ""; }).join(""); }
+        else if(r && r.text){ txt = r.text; }
+        else { txt = String(r || ""); }
+        txt = txt.replace(/```json/gi, "").replace(/```/g, "").trim();
+        var s = txt.indexOf("["), e = txt.lastIndexOf("]");
+        var list = [];
+        try{ if(s > -1 && e > -1){ list = JSON.parse(txt.slice(s, e + 1)); } }catch(err){}
+        loading.parentNode && loading.remove();
+        if(!list || !list.length){ bubble("Couldn't get suggestions this time \u2014 please try again.", "bot"); busy = false; return; }
+        bubble("Here are some sites you might like \u2014 tap Add to put them on your homepage:", "bot");
+        list.slice(0, 6).forEach(function(item){
+          if(!item || !item.url) return;
+          var host = ""; try{ host = new URL(item.url).hostname; }catch(_){}
+          var card = document.createElement("div");
+          card.className = "aiSuggest";
+          card.innerHTML = '<img src="https://www.google.com/s2/favicons?sz=64&domain=' + host + '"><div class="aiSugName">' + (item.name || host) + '</div>';
+          var add = document.createElement("button");
+          add.textContent = "Add"; add.setAttribute("data-ai-focus", "");
+          add.addEventListener("click", function(){
+            data.categories[catIndex].tiles.push({ name: item.name || host, url: item.url });
+            save(); render(); renderMostVisited();
+            add.textContent = "Added \u2713"; add.disabled = true; add.style.opacity = ".6";
+          });
+          card.appendChild(add);
+          msgs.appendChild(card);
+        });
+        msgs.scrollTop = msgs.scrollHeight;
+        busy = false;
+      });
+    }).catch(function(){
+      sFail("Couldn't reach the AI for suggestions. If it's your first time, accept the Puter sign-in pop-up and retry.");
+    });
+  }
+
+  /* ===================== MOST VISITED ===================== */
+  function getVisits(){ try{ return JSON.parse(localStorage.getItem("astra_mv")) || {}; }catch(e){ return {}; } }
+  function setVisits(v){ localStorage.setItem("astra_mv", JSON.stringify(v)); }
+  function trackVisit(name, url){
+    if(!url) return;
+    var v = getVisits();
+    if(!v[url]) v[url] = { name: name || url, url: url, count: 0 };
+    v[url].count++; v[url].name = name || v[url].name;
+    setVisits(v); renderMostVisited();
+  }
+  function topVisited(n){
+    var v = getVisits();
+    return Object.keys(v).map(function(k){ return v[k]; })
+      .sort(function(a, b){ return b.count - a.count; }).slice(0, n || 8);
+  }
+
+  var grid = document.getElementById("grid");
+  var mv = document.createElement("div");
+  mv.id = "aiMostVisited"; mv.style.display = "none";
+  if(grid && grid.parentNode) grid.parentNode.insertBefore(mv, grid);
+
+  function renderMostVisited(){
+    var list = topVisited(8).filter(function(x){ return x.count > 0; });
+    if(!list.length){ mv.style.display = "none"; mv.innerHTML = ""; return; }
+    mv.style.display = "block";
+    mv.innerHTML = '<div class="mvHead">\u26A1 Most Visited</div><div class="mvRow"></div>';
+    var row = mv.querySelector(".mvRow");
+    list.forEach(function(item){
+      var host = ""; try{ host = new URL(item.url).hostname; }catch(_){}
+      var el = document.createElement("div");
+      el.className = "mvTile";
+      el.innerHTML = '<img src="https://www.google.com/s2/favicons?sz=64&domain=' + host + '"><span>' +
+        item.name + '</span><span class="mvCount">' + item.count + ' visits</span>';
+      el.addEventListener("click", function(){ trackVisit(item.name, item.url); window.open(item.url, "_blank"); });
+      row.appendChild(el);
+    });
+  }
+
+  // count clicks on real tiles (capture phase so it runs alongside the existing onclick)
+  document.addEventListener("click", function(e){
+    var t = e.target.closest("#grid .tile");
+    if(!t || t.classList.contains("add")) return;
+    var nameDiv = t.querySelector("div:not(.menuDots)");
+    var name = nameDiv ? nameDiv.textContent.trim() : "";
+    if(!name) return;
+    var url = null;
+    for(var i=0;i<data.categories.length;i++){
+      var f = data.categories[i].tiles.filter(function(x){ return x.name === name; })[0];
+      if(f){ url = f.url; break; }
+    }
+    if(url) trackVisit(name, url);
+  }, true);
+
+  renderMostVisited();
+
+  /* ===================== REMOTE / KEYBOARD ===================== */
+  function focusables(){
+    return Array.prototype.slice.call(document.querySelectorAll("#aiPanel [data-ai-focus]"))
+      .filter(function(el){ return el.offsetParent !== null && !el.disabled; });
+  }
+  function clearAiFocus(){
+    var f = document.querySelectorAll(".ai-focus");
+    for(var i=0;i<f.length;i++) f[i].classList.remove("ai-focus");
+  }
+  function moveFocus(dir){
+    var items = focusables();
+    if(!items.length) return;
+    var idx = -1;
+    for(var i=0;i<items.length;i++){ if(items[i] === document.activeElement || items[i].classList.contains("ai-focus")){ idx = i; break; } }
+    idx = (idx < 0) ? 0 : (idx + dir + items.length) % items.length;
+    clearAiFocus();
+    items[idx].classList.add("ai-focus");
+    items[idx].focus();
+  }
+
+  document.addEventListener("keydown", function(e){
+    if(panelOpen){
+      if(e.key === "Escape"){ e.stopImmediatePropagation(); closePanel(); return; }
+      var typing = document.activeElement === input;
+      if(e.key === "Enter"){
+        e.stopImmediatePropagation();
+        if(typing){ e.preventDefault(); sendMessage(); }
+        else if(document.activeElement && document.activeElement.click){ document.activeElement.click(); }
+        return;
+      }
+      if(e.key === "ArrowUp" || e.key === "ArrowDown"){
+        e.preventDefault(); e.stopImmediatePropagation();
+        moveFocus(e.key === "ArrowDown" ? 1 : -1);
+        return;
+      }
+      if(e.key === "ArrowLeft" || e.key === "ArrowRight"){
+        if(typing){ e.stopImmediatePropagation(); return; }   // let the text cursor move
+        e.preventDefault(); e.stopImmediatePropagation();
+        moveFocus(e.key === "ArrowRight" ? 1 : -1);
+        return;
+      }
+      e.stopImmediatePropagation(); // keep typing keys away from the page's remote-nav handler
+      return;
+    }
+    // panel closed: ways to OPEN it
+    var ae = document.activeElement;
+    var inField = ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA");
+    if(!inField && (e.key === "a" || e.key === "A")){ e.stopImmediatePropagation(); openPanel(); return; }
+    if(typeof currentSection !== "undefined" && currentSection === "search" && e.key === "ArrowUp"){
+      e.stopImmediatePropagation(); openPanel(); return;
+    }
+  }, true);
+
+})();
+</script>
 
 </body>
   </html>
