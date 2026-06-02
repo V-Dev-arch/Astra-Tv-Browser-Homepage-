@@ -2,10 +2,8 @@
 <html lang="en">
 <head> 
   <link rel="icon" type="image/jpeg" href="https://files.catbox.moe/musa64.jpg">
-  <head>
-  <meta name="description" content="Astra TV Browser Homepage is an AI-powered, customizable browser homepage for Smart TVs featuring voice search, remote-friendly navigation, custom backgrounds, website shortcuts, category management, and a modern TV-optimized interface."
- <meta name="google-site-verification" content="BGGQsSnZvzdiuyi3GXyhvk_c6s7K7wrNesETUydm0xE" />
-<meta charset="UTF-8">
+  <meta name="description" content="Astra TV Browser Homepage is an AI-powered, customizable browser homepage for Smart TVs featuring voice search, remote-friendly navigation, custom backgrounds, website shortcuts, category management, and a modern TV-optimized interface.">
+  <meta name="google-site-verification" content="BGGQsSnZvzdiuyi3GXyhvk_c6s7K7wrNesETUydm0xE" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ASTV Browser Homepage By - V-Dev-arch</title>
 <!-- Free AI access (no API key, no backend) via Puter.js user-pays model -->
@@ -196,6 +194,16 @@ button{
   outline:3px solid #4b7bff !important;
   box-shadow:0 0 20px rgba(75,123,255,0.7);
   transform:scale(1.05);
+}
+/* Native focus ring for TV browsers (TV Bro etc.) that move real DOM focus with the D-pad.
+   These use the browser's :focus state, which is separate from the .remote-focus class above. */
+.tile:focus,.category:focus,.mvTile:focus,.menuDots:focus,.catDots:focus,
+.menuItem:focus,#remoteToggle:focus,
+.tile:focus-visible,.category:focus-visible,.mvTile:focus-visible,
+.menuDots:focus-visible,.catDots:focus-visible,.menuItem:focus-visible{
+  outline:3px solid #4b7bff;
+  outline-offset:2px;
+  box-shadow:0 0 18px rgba(75,123,255,0.7);
 }
   #topBar{
   display:flex;
@@ -997,15 +1005,15 @@ function openMenu(type,index,name){
 
   if(type==="tile"){
     menuBody.innerHTML=`
-      <div class="menuItem" onclick="editTile()">Edit</div>
-      <div class="menuItem menuDanger" onclick="deleteTile()">Delete</div>
+      <div class="menuItem" tabindex="0" role="menuitem" onclick="editTile()">Edit</div>
+      <div class="menuItem menuDanger" tabindex="0" role="menuitem" onclick="deleteTile()">Delete</div>
     `;
   }
 
   if(type==="category"){
     menuBody.innerHTML=`
-      <div class="menuItem" onclick="editCategory()">Edit</div>
-      <div class="menuItem menuDanger" onclick="deleteCategory()">Delete</div>
+      <div class="menuItem" tabindex="0" role="menuitem" onclick="editCategory()">Edit</div>
+      <div class="menuItem menuDanger" tabindex="0" role="menuitem" onclick="deleteCategory()">Delete</div>
     `;
   }
 
@@ -1076,10 +1084,13 @@ function renderCategories(){
   data.categories.forEach((cat,i)=>{
     let el=document.createElement("div");
     el.className="category"+(i===catIndex?" active":"");
+    el.tabIndex=0;
+    el.setAttribute("role","button");
+    el.setAttribute("aria-label",cat.name+" category");
 
     el.innerHTML=`
       ${(cat.icon||"📁")} ${cat.name}
-      <div class="catDots">⋮</div>
+      <div class="catDots" tabindex="0" role="button" aria-label="Options for ${cat.name}">⋮</div>
     `;
 
     el.onclick=()=>{ catIndex=i; render(); };
@@ -1095,6 +1106,9 @@ function renderCategories(){
   let add=document.createElement("div");
   add.className="category";
   add.innerText="+ Category";
+  add.tabIndex=0;
+  add.setAttribute("role","button");
+  add.setAttribute("aria-label","Add a category");
 
   add.onclick=()=>{
     let name=prompt("Category name");
@@ -1116,11 +1130,14 @@ function renderTiles(){
   tiles.forEach((t,i)=>{
     let el=document.createElement("div");
     el.className="tile";
+    el.tabIndex=0;                                   /* focusable -> TV browsers' native nav can land on it */
+    el.setAttribute("role","link");
+    el.setAttribute("aria-label",t.name);
 
     el.innerHTML=`
       <img src="${icon(t.url)}" width="32">
       <div>${t.name}</div>
-      <div class="menuDots">⋮</div>
+      <div class="menuDots" tabindex="0" role="button" aria-label="Options for ${t.name}">⋮</div>
     `;
 
     el.onclick=()=>window.open(t.url,"_blank");
@@ -1136,6 +1153,9 @@ function renderTiles(){
   let add=document.createElement("div");
   add.className="tile add";
   add.innerText="+ Add";
+  add.tabIndex=0;
+  add.setAttribute("role","button");
+  add.setAttribute("aria-label","Add a shortcut");
 
   add.onclick=()=>{
     let name=prompt("Name");
@@ -1183,11 +1203,55 @@ let categoryFocusIndex=0;
 let tileFocusIndex=0;
 let categoryDotMode=false;
 let tileDotMode=false;
+/* Most Visited strip, standalone page controls, and the Quick-Settings panel */
+let mvFocusIndex=0;
+let mvDotMode=false;          /* false = the tile itself, true = its small × delete button */
+let controlFocusIndex=0;
+let settingsFocusIndex=0;
 
 function clearFocus(){
   document.querySelectorAll(".remote-focus").forEach(el=>{
     el.classList.remove("remote-focus");
   });
+}
+
+/* ---- helpers: which elements each section can reach ---- */
+function getTopBarControls(){
+  /* every control in the top bar, left to right:
+     [search input, Search btn, voice btn, url input, Go btn] */
+  return Array.prototype.slice.call(
+    document.querySelectorAll("#topBar input, #topBar button")
+  );
+}
+function mvTiles(){ return document.querySelectorAll("#aiMostVisited .mvTile"); }
+function mvDeletes(){ return document.querySelectorAll("#aiMostVisited .mvDelete"); }
+function mvStripVisible(){
+  const s=document.getElementById("aiMostVisited");
+  return !!(s && s.style.display!=="none" && s.querySelector(".mvTile"));
+}
+function isShown(el){ return !!(el && el.getClientRects().length); }   /* true only if actually rendered */
+function getControlEls(){
+  /* standalone buttons outside the grid, in order, skipping any hidden via Quick Settings */
+  const out=[];
+  const gear=document.getElementById("widgetMenuBtn");        if(gear) out.push(gear);
+  const wp=document.getElementById("wallpaperBar");
+  if(wp){
+    const wi=wp.querySelector("input"); if(wi) out.push(wi);
+    wp.querySelectorAll("button").forEach(b=>out.push(b));
+  }
+  const gh=document.getElementById("githubBtn");              if(gh) out.push(gh);
+  return out.filter(isShown);
+}
+function updateSettingsFocus(){
+  const menu=document.getElementById("widgetMenu");
+  document.querySelectorAll("#widgetMenu .wmRow.remote-focus").forEach(r=>r.classList.remove("remote-focus"));
+  if(!menu) return;
+  const rows=menu.querySelectorAll(".wmRow");
+  if(!rows.length) return;
+  if(settingsFocusIndex>=rows.length) settingsFocusIndex=rows.length-1;
+  if(settingsFocusIndex<0) settingsFocusIndex=0;
+  rows[settingsFocusIndex].classList.add("remote-focus");
+  rows[settingsFocusIndex].scrollIntoView({block:"nearest"});
 }
 
 function updateFocusableElements(){
@@ -1198,27 +1262,48 @@ function updateFocusableElements(){
     return;
   }
 
+  /* if a section vanished under us (e.g. the last Most Visited shortcut was
+     deleted, or every standalone control is hidden), fall back gracefully */
+  if(currentSection==="mostvisited" && !mvStripVisible()){
+    currentSection="categories"; mvDotMode=false; mvFocusIndex=0;
+  }
+  if(currentSection==="controls" && !getControlEls().length){
+    currentSection="tiles";
+  }
+
   clearFocus();
 
-  const searchElements=[
-    searchBar,
-    document.querySelectorAll("#searchWrap button")[0],
-    urlBar,
-    document.querySelectorAll("#searchWrap button")[1]
-  ];
-
+  const searchElements=getTopBarControls();
   const categoryElements=document.querySelectorAll(".category");
   const categoryDots=document.querySelectorAll(".catDots");
   const tileElements=document.querySelectorAll(".tile");
   const tileDots=document.querySelectorAll(".menuDots");
+  const mvT=mvTiles();
+  const mvD=mvDeletes();
+  const controls=getControlEls();
 
   let target=null;
 
-  if(currentSection==="search") target=searchElements[searchIndex];
+  if(currentSection==="search"){
+    if(searchIndex>=searchElements.length) searchIndex=searchElements.length-1;
+    if(searchIndex<0) searchIndex=0;
+    target=searchElements[searchIndex];
+  }
   else if(currentSection==="categories"){
     target=categoryDotMode ? categoryDots[categoryFocusIndex] : categoryElements[categoryFocusIndex];
-  }else if(currentSection==="tiles"){
+  }
+  else if(currentSection==="mostvisited"){
+    if(mvFocusIndex>=mvT.length) mvFocusIndex=mvT.length-1;
+    if(mvFocusIndex<0) mvFocusIndex=0;
+    target=mvDotMode ? mvD[mvFocusIndex] : mvT[mvFocusIndex];
+  }
+  else if(currentSection==="tiles"){
     target=tileDotMode ? tileDots[tileFocusIndex] : tileElements[tileFocusIndex];
+  }
+  else if(currentSection==="controls"){
+    if(controlFocusIndex>=controls.length) controlFocusIndex=controls.length-1;
+    if(controlFocusIndex<0) controlFocusIndex=0;
+    target=controls[controlFocusIndex];
   }
 
   if(target){
@@ -1255,13 +1340,27 @@ function updateFocusableElements(){
     return;
   }
 
+  /* Quick-Settings panel open -> Up/Down move between toggles, Enter flips one */
+  const wMenu=document.getElementById("widgetMenu");
+  if(wMenu && wMenu.classList.contains("open")){
+    const toggles=wMenu.querySelectorAll("input[type=checkbox]");
+    if(e.key==="ArrowDown" && settingsFocusIndex<toggles.length-1) settingsFocusIndex++;
+    else if(e.key==="ArrowUp" && settingsFocusIndex>0) settingsFocusIndex--;
+    else if(e.key==="Enter"){ if(toggles[settingsFocusIndex]) toggles[settingsFocusIndex].click(); }
+    else if(e.key==="Escape"||e.key==="Backspace"){ clearFocus(); return; }  /* panel's own handler closes it */
+    clearFocus();
+    updateSettingsFocus();
+    return;
+  }
+
   if(e.key==="Escape"||e.key==="Backspace"){
     closeMenu();
     return;
   }
 
   if(currentSection==="search"){
-    if(e.key==="ArrowRight" && searchIndex<3) searchIndex++;
+    const tb=getTopBarControls();
+    if(e.key==="ArrowRight" && searchIndex<tb.length-1) searchIndex++;
     else if(e.key==="ArrowLeft" && searchIndex>0) searchIndex--;
     else if(e.key==="ArrowDown") currentSection="categories";
   }
@@ -1278,8 +1377,28 @@ function updateFocusableElements(){
       if(categoryDotMode) categoryDotMode=false;
       else if(categoryFocusIndex>0) categoryFocusIndex--;
     }
-    else if(e.key==="ArrowDown") currentSection="tiles";
+    else if(e.key==="ArrowDown"){
+      if(mvStripVisible()){ currentSection="mostvisited"; mvFocusIndex=0; mvDotMode=false; }
+      else currentSection="tiles";
+    }
     else if(e.key==="ArrowUp") currentSection="search";
+  }
+
+  else if(currentSection==="mostvisited"){
+    const mvT=mvTiles();
+    if(e.key==="ArrowRight"){
+      if(!mvDotMode) mvDotMode=true;                 /* hop onto the small × delete button */
+      else{
+        mvDotMode=false;
+        if(mvFocusIndex<mvT.length-1) mvFocusIndex++;
+      }
+    }
+    else if(e.key==="ArrowLeft"){
+      if(mvDotMode) mvDotMode=false;
+      else if(mvFocusIndex>0) mvFocusIndex--;
+    }
+    else if(e.key==="ArrowDown"){ mvDotMode=false; currentSection="tiles"; }
+    else if(e.key==="ArrowUp"){ mvDotMode=false; currentSection="categories"; }
   }
 
   else if(currentSection==="tiles"){
@@ -1298,18 +1417,32 @@ function updateFocusableElements(){
     }
     else if(e.key==="ArrowDown"){
       if(tileFocusIndex+columns<tileElements.length) tileFocusIndex+=columns;
+      else if(getControlEls().length){ currentSection="controls"; controlFocusIndex=0; }
     }
     else if(e.key==="ArrowUp"){
       if(tileFocusIndex-columns>=0) tileFocusIndex-=columns;
+      else if(mvStripVisible()){ currentSection="mostvisited"; mvFocusIndex=0; mvDotMode=false; }
       else currentSection="categories";
     }
+  }
+
+  else if(currentSection==="controls"){
+    const cs=getControlEls();
+    if(e.key==="ArrowRight" && controlFocusIndex<cs.length-1) controlFocusIndex++;
+    else if(e.key==="ArrowLeft" && controlFocusIndex>0) controlFocusIndex--;
+    else if(e.key==="ArrowUp") currentSection="tiles";
   }
 
   if(e.key==="Enter"){
     let focused=document.querySelector(".remote-focus");
     if(focused){
-      if(focused.tagName==="INPUT") focused.focus();
+      if(focused.tagName==="INPUT" && focused.type!=="checkbox") focused.focus();
       else focused.click();
+      if(focused.id==="widgetMenuBtn"){
+        settingsFocusIndex=0;
+        const wm=document.getElementById("widgetMenu");
+        if(wm && wm.classList.contains("open")){ clearFocus(); updateSettingsFocus(); return; }
+      }
     }
   }
 
@@ -1692,12 +1825,23 @@ if(savedWallpaper){
 #aiMostVisited .mvHead{ font-size:13px; font-weight:bold; letter-spacing:.6px; text-transform:uppercase; color:#9fd3ff;
   margin-bottom:8px; display:flex; align-items:center; gap:6px; }
 #aiMostVisited .mvRow{ display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; }
-.mvTile{ flex:0 0 auto; min-width:96px; display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 14px;
+.mvTile{ position:relative; flex:0 0 auto; min-width:96px; display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 14px;
   border-radius:14px; cursor:pointer; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); transition:.18s; }
 .mvTile:hover{ background:rgba(255,255,255,.12); transform:translateY(-2px); }
 .mvTile img{ width:30px; height:30px; }
 .mvTile span{ font-size:13px; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .mvTile .mvCount{ font-size:11px; color:#9fd3ff; }
+/* small delete button, top-right of each Most Visited tile */
+.mvDelete{ position:absolute; top:4px; right:4px; width:18px; height:18px; padding:0; margin:0;
+  border:none; border-radius:50%; background:rgba(0,0,0,.5); color:#fff;
+  font-size:13px; line-height:18px; text-align:center; cursor:pointer;
+  opacity:0; transition:opacity .15s, background .15s, transform .15s; }
+.mvTile:hover .mvDelete{ opacity:1; }
+.mvDelete:hover{ background:#e23b3b; transform:scale(1.12); }
+/* keep the × visible when the remote lands on the tile or on the button itself */
+.mvTile.remote-focus .mvDelete, .mvDelete.remote-focus{ opacity:1; }
+/* touch / TV remotes have no hover, so always show it there */
+@media (hover:none){ .mvDelete{ opacity:1; } }
 </style>
 
 <button id="aiLauncher" tabindex="0"><span class="aiSpark">&#10022;</span> Ask AI</button>
@@ -1780,7 +1924,7 @@ if(savedWallpaper){
     panelOpen = true;
     overlay.classList.add("open");
     if(!msgs.childElementCount){
-      bubble("Hi! I'm Astra AI \u2726  Ask me anything, or try a command like \"open YouTube\" or \"search cooking videos\". Tap \u2728 for site suggestions.", "bot");
+      bubble("Hi! I'm Astra AI \u2726 ask  me anything, or try a command like \"open YouTube\" or \"search cooking videos\". Tap \u2728 for site suggestions.", "bot");
     }
     setTimeout(function(){ input.focus(); }, 120);
   }
@@ -1985,6 +2129,13 @@ if(savedWallpaper){
   /* ===================== MOST VISITED ===================== */
   function getVisits(){ try{ return JSON.parse(localStorage.getItem("astra_mv")) || {}; }catch(e){ return {}; } }
   function setVisits(v){ localStorage.setItem("astra_mv", JSON.stringify(v)); }
+  function removeVisit(url){
+    if(!url) return;
+    var v = getVisits();
+    delete v[url];
+    setVisits(v);
+    renderMostVisited();
+  }
   function trackVisit(name, url){
     if(!url) return;
     var v = getVisits();
@@ -2013,9 +2164,26 @@ if(savedWallpaper){
       var host = ""; try{ host = new URL(item.url).hostname; }catch(_){}
       var el = document.createElement("div");
       el.className = "mvTile";
+      el.tabIndex = 0;
+      el.setAttribute("role","link");
+      el.setAttribute("aria-label", item.name);
       el.innerHTML = '<img src="https://www.google.com/s2/favicons?sz=64&domain=' + host + '"><span>' +
         item.name + '</span><span class="mvCount">' + item.count + ' visits</span>';
       el.addEventListener("click", function(){ trackVisit(item.name, item.url); window.open(item.url, "_blank"); });
+
+      // small delete button (top-right) — removes this site from Most Visited
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "mvDelete";
+      del.textContent = "\u00D7"; // ×
+      del.title = "Remove from Most Visited";
+      del.setAttribute("aria-label", "Remove " + item.name + " from Most Visited");
+      del.addEventListener("click", function(e){
+        e.stopPropagation();   // don't trigger the tile's open-site click
+        removeVisit(item.url);
+      });
+      el.appendChild(del);
+
       row.appendChild(el);
     });
   }
@@ -2090,6 +2258,41 @@ if(savedWallpaper){
     }
   }, true);
 
+})();
+</script>
+
+<script>
+/* ============================================================
+   Native-nav activation:
+   TV browsers (TV Bro, Android WebView, etc.) move the real DOM
+   focus with the D-pad. A focusable <div> (our tiles, categories,
+   ⋮ menus and menu items) does NOT fire a click on OK/Enter by
+   itself, so we add that here.
+
+   The page's own "Remote Nav" only adds a .remote-focus *class* and
+   never moves real DOM focus onto a tile -- so if document.activeElement
+   is actually one of these widgets, the BROWSER put it there (native
+   nav). In that case we activate it and stop the event in the capture
+   phase, so the page's built-in arrow handler can't also react. When
+   focus is elsewhere (body, an input, the AI panel) we do nothing and
+   let the existing handlers run as before.
+   ============================================================ */
+(function(){
+  var SEL = ".tile, .category, .mvTile, .menuDots, .catDots, .menuItem";
+  function isWidget(el){ return el && el.matches && el.matches(SEL); }
+
+  document.addEventListener("keydown", function(e){
+    var isEnter = e.key === "Enter" || e.keyCode === 13;
+    var isSpace = e.key === " " || e.key === "Spacebar" || e.keyCode === 32;
+    if(!isEnter && !isSpace) return;
+
+    var el = document.activeElement;
+    if(!isWidget(el)) return;       /* native nav isn't on one of our widgets -> leave it alone */
+
+    e.preventDefault();             /* stop Space from scrolling */
+    e.stopImmediatePropagation();   /* take precedence over the page's own Enter handler */
+    el.click();
+  }, true);                         /* capture phase: runs before the bubble-phase remote handler */
 })();
 </script>
 
