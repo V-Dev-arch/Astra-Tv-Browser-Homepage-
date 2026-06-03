@@ -76,6 +76,35 @@ UI Includes
 
 --- 
 
+# Astra Cloud Sync ☁️
+
+Introducing Astra Cloud Sync — keep your Astra experience available anywhere and on any device.
+
+With Cloud Sync, your preferences, saved sites, customizations, and supported Astra data can be securely synced across devices, so you can continue where you left off.
+
+How it works
+
+- Sign in or create an Astra account.
+- Enable Cloud Sync.
+- Your supported Astra data will automatically sync across your connected devices.
+
+Important
+
+- Cloud Sync is completely optional.
+- Astra works perfectly in Local Mode without an account.
+- If you choose to use Cloud Sync, sign in or sign up is required to securely store and sync your data.
+
+Why use Cloud Sync?
+
+✓ Access your Astra data anywhere
+✓ Keep your experience consistent across devices
+✓ Easy backup and restoration of supported data
+✓ Seamless synchronization between signed-in devices
+
+You stay in control — use Astra locally, or enable Cloud Sync whenever you need it.
+
+---
+
 # Astra AI
 
 Astra AI is the smart assistant built into Astra TV Browser Homepage. It can understand natural language commands and quickly help you navigate the web. Simply type commands like "open YouTube", "open Google", or "open Netflix", and Astra AI will automatically take you to the requested website.
