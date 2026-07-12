@@ -469,7 +469,7 @@ just paste that inside the custom image link box and BOOM 💥 you will immediat
 
 Visit now: 
 
-https://v-dev-arch.github.io/Astra-Tv-Browser-Homepage-/
+https://astv.gt.tc
 
 ---
 
